@@ -6,57 +6,24 @@ import {NTitle as Title} from './Styles/WelcomeStyle';
 
 class Welcome extends Component {
 
-    constructor(props) {
-
-        super(props)
-
-        // Check user authentication initally.
-        this.__SessionCheck__()
-
-    }
-
-    /*
-     * __SessionCheck__() to determine User is logged in or no.
-     * It redirects user to login if not logged in.
-     */
-
-    __SessionCheck__() {
-
-        if (this.props.SessionReducer.auth) {
-            this.props.history.push("/admin/welcome")
-        } else {
-            this.props.history.push("/")
-        }
-
-    }
-
     render() {
-
         return (<Title> Welcome</Title>)
-
-    }
-    ;
+    };
 }
 
 Welcome.propTypes = {
-    classes: PropTypes.object.isRequired,
+  user: PropTypes.object,
+  attributes: PropTypes.object,
+  state: PropTypes.string,
 };
 
 
-const mapStateToProps = (state) => {
-    return {
-        SessionReducer: state.SessionReducer
-    };
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        RunRedux: (data) => {
-            dispatch(data);
-        },
-    };
-};
+const mapStateToProps = state => ({
+  state: state.cognito.state,
+  user: state.cognito.user,
+  attributes: state.cognito.attributes,
+});
 
 export default compose(
-        connect(mapStateToProps, mapDispatchToProps)
+        connect(mapStateToProps, null)
         )(Welcome);

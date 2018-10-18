@@ -29,30 +29,6 @@ const rows = [
 
 class Pending extends Component {
 
-  constructor(props){
-    
-    super(props)
-    
-    // Check user authentication initally.
-    this.__SessionCheck__()
-    
-  }
-
-   /*
-   * __SessionCheck__() to determine User is logged in or no.
-   * It redirects user to login if not logged in.
-   */  
-  
-  __SessionCheck__(){
-
-    if(this.props.SessionReducer.auth){
-        this.props.history.push("/admin/pending")
-    }else{
-      this.props.history.push("/")
-    }
-
-  } 
-  
    /*
    * Redirect to Pending Vehicle Detail page
    */  

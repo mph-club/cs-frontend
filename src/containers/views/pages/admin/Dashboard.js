@@ -25,7 +25,8 @@ import DashboardStyle from './Styles/DashboardStyle';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import AuthenticationPresenter from "../../../../account/login/presenter.js"
+import { CognitoState, Logout } from 'react-cognito';
+import LogoutButton from '../../../../components/auth/LogoutButton'
 
 class Dashboard extends React.Component {
 
@@ -48,22 +49,15 @@ class Dashboard extends React.Component {
    */
   
   __SessionCheck__(){
-
-    if(this.props.SessionReducer.auth){
-      if (!this.props.SessionReducer.admin){
-        this.props.history.push("/admin/welcome")
-      }
+    
+    if(this.props.state === CognitoState.LOGGED_IN){
+      this.props.history.push("/admin/welcome")
     }else{
-      this.props.history.push("/")
+       this.props.history.push("/login") 
     }
 
   }
 
-
-  componentWillMount() {
-    
-  };
-  
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
@@ -117,7 +111,7 @@ class Dashboard extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {url}
               </Typography>
-              {(this.props.SessionReducer.auth) ?
+              {(this.props.state === CognitoState.LOGGED_IN) ?
                 <div>
                     <IconButton
                       aria-owns={open ? 'menu-appbar' : null}
@@ -142,10 +136,12 @@ class Dashboard extends React.Component {
                       onClose={this.handleClose}
                       >
                       <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                      <MenuItem onClick={()=>AuthenticationPresenter.Logout(this)}>Logout</MenuItem>
+                      <Logout>
+                        <LogoutButton />
+                      </Logout>
                     </Menu>
                   </div>
-              : null }
+              : this.props.history.push("/login")}
             </Toolbar>
           </AppBar>
           <Drawer
@@ -183,23 +179,18 @@ class Dashboard extends React.Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
+  user: PropTypes.object,
+  attributes: PropTypes.object,
+  state: PropTypes.string,
 };
 
-const mapStateToProps = (state) => {
-  return {
-      SessionReducer: state.SessionReducer
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        RunRedux: (data) => {
-            dispatch(data);
-        },
-    };
-};
+const mapStateToProps = state => ({
+  state: state.cognito.state,
+  user: state.cognito.user,
+  attributes: state.cognito.attributes,
+});
 
 export default compose(
                 withStyles(DashboardStyle),
-                connect(mapStateToProps, mapDispatchToProps)
+                connect(mapStateToProps, null)
                 )(Dashboard);

@@ -61,24 +61,9 @@ class PendingDetail extends Component {
       justify: 'center',
       activeStep: 0,
     };
-    
-    // Check user authentication initally.
-    this.__SessionCheck__()
+
   }
 
-   /*
-   * __SessionCheck__() to determine User is logged in or no.
-   * It redirects user to login if not logged in.
-   */
-  
-  __SessionCheck__(){
-      
-    if(!this.props.SessionReducer.auth){
-      this.props.history.push("/")
-    }
-
-  } 
-  
   /*
    * Handle of right Arrow button for Carousel
    * Load the immediate right image
