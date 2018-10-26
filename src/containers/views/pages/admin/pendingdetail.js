@@ -18,6 +18,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import {connect} from "react-redux";
 import {compose} from 'redux'
 import {NTitle,NTitle1,NTitle2,NCarouselbutton,Nstyles} from './Styles/PendingDetailStyle';
+import ConfirmationDialog from '../../dialogs/approve';
 
 /*
  * Static list of images for Carousel
@@ -60,6 +61,9 @@ class PendingDetail extends Component {
       direction: 'row',
       justify: 'center',
       activeStep: 0,
+      open_approve_dialog: false,
+      open_reject_dialog:false,
+      open_success_dialog:false
     };
 
   }
@@ -85,15 +89,61 @@ class PendingDetail extends Component {
       activeStep: prevState.activeStep - 1,
     }));
   };
+  
+  handleClickOpenApproveDialog = () => {
+    this.setState({ open_approve_dialog: true,open_reject_dialog: false,open_success_dialog:false });
+  };
+  
+  handleClickOpenRejectDialog = () => {
+    this.setState({ open_approve_dialog: false,open_reject_dialog: true,open_success_dialog:false });
+  };
+
+  handleClose = value => {
+    this.setState({ value, open_approve_dialog: false,open_reject_dialog: false,open_success_dialog:true});
+  };
+  
+  handleSuccessClose = value => {
+    this.setState({ value, open_approve_dialog: false,open_reject_dialog: false,open_success_dialog:false});
+  };
 
   render() {
     const { classes, theme } = this.props;
     const { alignItems, direction, activeStep } = this.state;
     const maxSteps = vehicleSteps.length;
     return (
-      <div>
+    <div>        
         <NTitle> Detail of Pending Vehical</NTitle>
         <Paper className={classes.root}>
+            <ConfirmationDialog
+              classes={{
+                  paper: classes.paper,
+              }}
+              open={this.state.open_approve_dialog}
+              onClose={this.handleClose}
+              value="test"
+              message="Are you sure you want to approve the vehicle?"
+              buttons={[{label:'Ok'},{label:'Cancel'}]}
+            />
+            <ConfirmationDialog
+              classes={{
+                  paper: classes.paper,
+              }}
+              open={this.state.open_reject_dialog}
+              onClose={this.handleClose}
+              value="test"
+              message="Are you sure you want to reject the vehicle?"
+              buttons={[{label:'Ok'},{label:'Cancel'}]}
+            />
+            <ConfirmationDialog
+              classes={{
+                  paper: classes.paper,
+              }}
+              open={this.state.open_success_dialog}
+              onClose={this.handleSuccessClose}
+              value="test"
+              message="Vehicle listing is approved."
+              buttons={[{label:'Ok'}]}
+            />
           <Grid container justify="center">
             <Grid item lg={8} className={classes.positionRelative}>
               <img
@@ -250,12 +300,12 @@ class PendingDetail extends Component {
                   />
                   <Grid container spacing={24}>
                     <Grid item align="left" xs={6}>
-                      <Button variant="contained" size="large" color="primary" className={classes.button}>
+                      <Button variant="contained" size="large" color="primary" className={classes.button} onClick={this.handleClickOpenApproveDialog}>
                         Approve
                       </Button>
                     </Grid>
                     <Grid item align="right" xs={6}>
-                      <Button variant="contained" size="large" color="secondary" className={classes.button}>
+                      <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenRejectDialog}>
                         Reject
                       </Button>
                     </Grid>
@@ -264,7 +314,7 @@ class PendingDetail extends Component {
               </Grid>
             </Grid>
           </Grid>
-
+  
         </Paper>
       </div>
     )
