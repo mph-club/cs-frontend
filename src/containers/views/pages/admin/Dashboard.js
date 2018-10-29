@@ -27,6 +27,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { CognitoState, Logout } from 'react-cognito';
 import LogoutButton from '../../../../components/auth/LogoutButton'
+import Guests from './Guests';
+import Hosts from './Hosts';
 
 class Dashboard extends React.Component {
 
@@ -51,9 +53,9 @@ class Dashboard extends React.Component {
   __SessionCheck__(){
     
     if(this.props.state === CognitoState.LOGGED_IN){
-      this.props.history.push("/admin/welcome")
+        this.props.history.push("/admin/welcome")
     }else{
-       this.props.history.push("/login") 
+         this.props.history.push("/login") 
     }
 
   }
@@ -168,6 +170,8 @@ class Dashboard extends React.Component {
                <Route path="/admin/welcome" name="welcome" component={Welcome}/>
                <Route path="/admin/pending" name="pending" component={Pending}/>
                <Route path="/admin/pendingdetail/:Vehicle" name="pendingdetail" component={PendingDetail}/>
+               <Route path="/admin/guests" name="guests" component={Guests}/>
+               <Route path="/admin/hosts" name="hosts" component={Hosts}/>
                </Switch>
             </div>
           </main>

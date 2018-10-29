@@ -10,7 +10,6 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import PeopleIcon from '@material-ui/icons/People';
 import DirectionsCarICon from '@material-ui/icons/DirectionsCar';
-import BookICon from '@material-ui/icons/Book';
 import BarChartIcon from '@material-ui/icons/BarChart';
 
 import WatchLater from '@material-ui/icons/WatchLater';
@@ -31,13 +30,18 @@ const styles = theme => ({
 
 class NestedList extends React.Component {
   state = {
-    open: false,
+    vehicle_open: false,
+    user_open:false
   };
 
   handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
+    this.setState(state => ({ vehicle_open: !state.vehicle_open }));
   };
-
+  
+  handleUserClick = () => {
+    this.setState(state => ({ user_open: !state.user_open }));
+  };
+  
   render() {
     const { classes } = this.props;
 
@@ -51,26 +55,37 @@ class NestedList extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={this.handleUserClick}>
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>
           <ListItemText primary="Users" />
+          {this.state.user_open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <BookICon />
-          </ListItemIcon>
-          <ListItemText primary="Booking" />
-        </ListItem>
+        <Collapse in={this.state.user_open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem button className={classes.nested} component={Link} to="/admin/guests">
+              <ListItemIcon>
+                <WatchLater />
+              </ListItemIcon>
+              <ListItemText inset primary="Guests" />
+            </ListItem>
+            <ListItem button className={classes.nested} component={Link} to="/admin/hosts">
+              <ListItemIcon>
+                <WatchLater />
+              </ListItemIcon>
+              <ListItemText inset primary="Hosts" />
+            </ListItem>
+          </List>
+        </Collapse>
         <ListItem button onClick={this.handleClick} >
           <ListItemIcon>
             <DirectionsCarICon />
           </ListItemIcon>
           <ListItemText inset primary="Vehicals" />
-          {this.state.open ? <ExpandLess /> : <ExpandMore />}
+          {this.state.vehicle_open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+        <Collapse in={this.state.vehicle_open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItem button className={classes.nested} component={Link} to="/admin/pending">
               <ListItemIcon>

@@ -1,31 +1,123 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-
-import styled from 'styled-components'
-import {connect} from "react-redux";
-import {compose} from 'redux'
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import MUIDataTable from "mui-datatables";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
-import Cities from './city';
-import { Nstyles, NTitle }   from './Styles/PendingStyle';
+import VehicleStatus from '../../../../components/vehicle/VehicleStatus';
+import { Nstyles }   from './Styles/WelcomeStyle';
+import axios from 'axios';
+import Server from '../../../../config/server.js'
 
 class Welcome extends React.Component {
+    
+    constructor(props){
+        super(props);        
+        this.state = {
+            page: 0,
+            item_per_page: 10,
+            offset:0,
+            sort_by:'Make',
+            sort_order:'asc',
+            table_data:[],
+            count:0
+        }
+      
+        this.getData();        
+    }
+    
+    getData = () => {
+        
+        var params ={
+                      offset:this.state.offset,
+                      limit:this.state.item_per_page,
+                      sort_by:this.state.sort_by,
+                      sort_order:this.state.sort_order
+                    };
+        this.getVehicleDataAPI(params).then(response => {
+            var result = [];
+            for(var i=0;i< response.data.length;i++){
+                var arr = [];
+                for (var key in response.data[i]) {
+                  arr.push(response.data[i][key]);
+                }
+                result.push(arr);
+            }
+            this.setState({
+                table_data:result,
+                count:response.recordsTotal
+            });
+        });
+        
+    }
+    
+    getVehicleDataAPI = (params) => {
+        
+        return new Promise((resolve, reject) => {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/getItems?limit='+params.limit+'&offset='+params.offset+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order,{}).then(function (response) {
+                setTimeout(() => {
+                    resolve(response.data);
+                }, 250);
+            }).catch((error) => {
+                resolve([{data:[],recordsTotal:0}]);
+            });
+   
+        });
+        
+    }
+    
+    changePage = (request) => {
+        this.setState({
+            page:request.page,
+            offset:(request.page * this.state.item_per_page),
+            item_per_page:request.rowsPerPage
+        },() => { this.getData();});
+    };
+    
+    changeRowPage = (request) => {
+        this.setState({
+            page: 0,
+            offset:(0 * this.state.item_per_page),
+            item_per_page:request.rowsPerPage
+        },() => {this.getData();});
+    };
+    
+    sortRow = tableState => {
+        debugger;
+       
+            var params ={
+                      offset:this.state.offset,
+                      limit:this.state.item_per_page,
+                      sort_by:this.state.sort_by,
+                      sort_order:this.state.sort_order
+                    };
+        this.getVehicleDataAPI(params).then(response => {
+            var result = [];
+            for(var i=0;i< response.data.length;i++){
+                var arr = [];
+                for (var key in response.data[i]) {
+                  arr.push(response.data[i][key]);
+                }
+                result.push(arr);
+            }
+            this.setState({
+                table_data:result,
+                count:response.recordsTotal
+            });
+        });     
+         
+    };
+    
+    
+    
   render() {
-        const { classes } = this.props;
+    const { classes } = this.props;
     const columns = [
     {
-        name: "Image",
+        name: "Picture",
         options: {
           filter: false,
           sort:false,
           customBodyRender: (value, tableMeta, updateValue) => {
-            console.log(value);
             return (
              <Avatar alt="Remy Sharp" src={`../images/${value}`} className={classes.avatar} />
             );
@@ -33,130 +125,83 @@ class Welcome extends React.Component {
         }
       },
       {
-        name: "Name",
+        name: "Make",
         options: {
-          filter: false
+          filter: true,
+          sort:true,
+          sortDirection:'asc'
         }
       },
       {
-        name: "Brands",
+        name: "Model",
         options: {
           filter: true
         }
       },
       {
-        name: "Location",
+        name: "Year",
         options: {
           filter: true,
-          sort:false,
-          customBodyRender: (value, tableMeta, updateValue) => {
-            console.log(value);
-            return (
-              <Cities
-                value={value}
-                index={tableMeta.columnIndex}
-                change={event => updateValue(event)}
-              />
-            );
-          }
+          sort:true,
         }
       },
      
       {
-        name: "Price",
+        name: "Hosted By",
         options: {
           filter: true,
-          customBodyRender: (value, tableMeta, updateValue) => {
-            const nf = new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            });
-
-            return nf.format(value);
-          }
         }
       },
       {
-        name: "Active",
+        name: "Status",
         options: {
-          filter: true,
-          sort:false,
-          customBodyRender: (value, tableMeta, updateValue) => {
-            return (
-              <FormControlLabel
-                label={value ? "Approved" : "Pending"}
-                value={value ? "Approved" : "Pending"}
-                control={
-                  <Switch
-                    color="primary"
-                    checked={value}
-                    value={value ? "Approved" : "Pending"}
-                  />
-                }
-                onChange={event => {
-                  updateValue(event.target.value === "Approved" ? false : true);
-                }}
-              />
-            );
-          }
-        }
+            filter: true,
+            sort:false,
+            customBodyRender: (value, tableMeta, updateValue) => {
+                return (
+                    <VehicleStatus
+                    value={value}
+                    index={tableMeta.columnIndex}
+                    change={event => updateValue(event)}
+                    />
+                );
+            }
+        } 
       }
     ];
-
-    const data = [
-      ["one.jpg","Robin Duncan", "Farari", "Los Angeles",  77000, false],
-      ["two.jpg","Mel Brooks", "Toyota", "Oklahoma City",  135000, true],
-      ["three.jpeg","Harper White", "Maruti", "Pittsburgh",  420000, false],
-      ["four.jpeg","Kris Humphrey", "Hundai", "Laredo",  150000, true],
-      ["five.jpeg","Frankie Long", "Land Rover", "Austin",  170000, false],
-      ["one.jpg","Brynn Robbins", "Porsche", "Norfolk",  90000, true],
-      ["two.jpg","Justice Mann", "Rolls-Royce", "Chicago",  133000, false],
-      [
-        "three.jpeg",
-        "Addison Navarro",
-        "Mercedes",
-        "New York",
-        295000,
-        true
-      ],
-      ["four.jpeg","Jesse Welch", "Bentley", "Seattle",  200000, false],
-      ["five.jpeg","Eli Mejia", "Aston", "Long Beach", 400000, true],
-      ["one.jpg","Gene Leblanc", "Bentley Mulsanne", "Hartford",  110000, false],
-      ["two.jpg","Danny Leon", "BMW", "Newark", 220000, true],
-      ["three.jpeg","Lane Lee", "Honda", "Cincinnati",  180000, false],
-      ["four.jpeg","Jesse Hall", "Ford", "Baltimore", 99000, true],
-      ["five.jpeg","Danni Hudson", "Audi", "Tampa",  90000, false],
-      ["one.jpg","Terry Macdonald", "Nissan", "Miami",  140000, true],
-      ["two.jpg","Justice Mccarthy", "Volkswagen", "Tucson",  330000, false],
-      ["three.jpeg","Silver Carey", "Porsche", "Memphis",  250000, true],
-      ["four.jpeg","Franky Miles", "Land Rover", "Buffalo",  190000, false],
-      ["five.jpeg","Glen Nixon", "Harley Davidson", "Arlington",  80000, true],
-      [
-       "two.jpg",
-        "Gabby Strickland",
-        "Mini",
-        "Scottsdale",
-        45000,
-        false
-      ],
-      ["four.jpeg","Mason Ray", "Ferrari", "San Francisco", 142000, true]
-    ];
-
     const options = {
       filter: true,
       filterType: "dropdown",
       responsive: "scroll",
-      selectableRows: false 
+      selectableRows: false,
+      serverSide: true,
+      count:this.state.count,
+      page: this.state.page,
+      rowsPerPage:this.state.item_per_page,
+      onTableChange: (action, tableState) => {
+        debugger;  
+        switch (action) {
+          case 'changePage':
+            this.changePage(tableState);
+            break;
+          case 'changeRowsPerPage':
+            this.changeRowPage(tableState);
+            break;
+          case 'sort':
+            this.sortRow(tableState);
+            break;
+        default:
+            break;
+        }
+      }
     };
 
     return (
       <MUIDataTable
         title={"Vehicals list"}
-        data={data}
+        data={this.state.table_data}
         columns={columns}
-        options={options}   
+        options={options}     
       />
     );
   }
@@ -166,22 +211,4 @@ Welcome.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-
-const mapStateToProps = (state) => {
-  return {
-      SessionReducer: state.SessionReducer
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        RunRedux: (data) => {
-            dispatch(data);
-        },
-    };
-};
-
-export default compose(
-                  withStyles(Nstyles), 
-                  connect(mapStateToProps, mapDispatchToProps)
-                  )(Welcome);
+export default withStyles(Nstyles) (Welcome);
