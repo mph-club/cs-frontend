@@ -11,7 +11,6 @@ import Dialog from '@material-ui/core/Dialog';
 class ConfirmationDialog extends React.Component {
   constructor(props) {
     super();
-    debugger;
     this.state = {
       value: props.value,
       message:props.message,

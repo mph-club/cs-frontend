@@ -33,8 +33,8 @@ class Pending extends Component {
    * Redirect to Pending Vehicle Detail page
    */  
 
-  __pendingdetail__(row) {
-    this.props.history.push("/admin/pendingdetail/" + row)
+  __vehicledetail__(row) {
+    this.props.history.push("/admin/vehicledetail/" + row)
   }
 
   render() {
@@ -68,7 +68,7 @@ class Pending extends Component {
                         {row.desc}</Typography>
                     </TableCell>
                     <TableCell>
-                      <ArrowRightAlt className={classes.ArrowRightAlt} onClick={this.__pendingdetail__.bind(this, row.id)} />
+                      <ArrowRightAlt className={classes.ArrowRightAlt} onClick={this.__vehicledetail__.bind(this, row.id)} />
                     </TableCell>
                   </TableRow>
                 );

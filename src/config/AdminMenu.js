@@ -10,7 +10,7 @@ menu[1]= {
 }
 menu[2]= {
   label : 'Vehicles Detail',  
-   url : 'pendingdetail'
+   url : 'vehicledetail'
 }
 menu[4]= {
   label : 'Guests',  

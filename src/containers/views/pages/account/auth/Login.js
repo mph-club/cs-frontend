@@ -35,14 +35,14 @@ class LoginContainer extends React.Component {
     
     __SessionCheck__(){
         if(this.props.state === CognitoState.LOGGED_IN){
-          this.props.history.push("/admin/welcome")
+          this.props.history.push("/admin/vehicles")
         }
       
     }
     
   render() {
     if(this.props.state === CognitoState.LOGGED_IN){
-        this.props.history.push("/admin/welcome")
+        this.props.history.push("/admin/vehicles")
         return ('');
     }else{
         return (

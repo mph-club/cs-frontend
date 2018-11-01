@@ -1,4 +1,4 @@
-import Session from '../../cridentials/session.js'
+import Session from '../../credential/session.js'
 export default {
   
   /*

@@ -16,20 +16,27 @@ class Guests extends React.Component {
     constructor(props){
         super(props);        
         this.state = {
-            page: 1,
+            page: 0,
             item_per_page: 10,
             offset:0,
+            sort_by:'user_name',
+            sort_order:'desc',
             table_data:[],
-            count:0
-        }        
-    }
-    
-    componentDidMount() {
+            count:0,
+        }
+        this.getData = this.getData.bind(this);
+        this.sortRow = this.sortRow.bind(this);
+        
         this.getData();
     }
     
     getData = () => {
-        var params = {offset:this.state.offset,limit:this.state.item_per_page};
+        var params ={
+                      offset:this.state.offset,
+                      limit:this.state.item_per_page,
+                      sort_by:this.state.sort_by,
+                      sort_order:this.state.sort_order
+                    };
         this.getGuestDataAPI(params).then(response => {
             var result = [];
             for(var i=0;i< response.data.length;i++){
@@ -49,24 +56,44 @@ class Guests extends React.Component {
     
     getGuestDataAPI = (params) => {
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getGuestsList?limit='+params.limit+'&offset='+params.offset,{}).then(function (response) {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getGuestsList?limit='+params.limit+'&offset='+params.offset+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order,{}).then(function (response) {
                 setTimeout(() => {
                     resolve(response.data);
                 }, 250);
             }).catch((error) => {
-                resolve([]);
+                resolve([{data:[],recordsTotal:0}]);
             });
    
         });
         
     }
     
-    changePage = (nextPage) => {
+    changePage = (request) => {
         this.setState({
-            page: nextPage,
-            offset: (nextPage * this.state.item_per_page) + 1
-        });   
-        this.getData();  
+            page:request.page,
+            offset:(request.page * this.state.item_per_page),
+            item_per_page:request.rowsPerPage
+        },() => { this.getData();});
+    };
+    
+    changeRowPage = (request) => {
+        this.setState({
+            page: 0,
+            offset:(0 * this.state.item_per_page),
+            item_per_page:request.rowsPerPage
+        },() => {this.getData();});
+    };
+    
+    sortRow = (request) => {
+        this.setState({
+            page: 0,
+            offset:(0 * this.state.item_per_page),
+            item_per_page:request.rowsPerPage,
+            sort_by:request.columns[request.activeColumn].name,
+            sort_order:request.columns[request.activeColumn].sortDirection
+        },() => {
+            this.getData();      
+            });
     };
     
     
@@ -81,15 +108,16 @@ class Guests extends React.Component {
           sort:false,
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
-             <Avatar alt="Remy Sharp" src={`../images/${value}`} className={classes.avatar} />
+             <Avatar alt="Remy Sharp" src={`../images/users/${value}`} className={classes.avatar} />
             );
           }
         }
       },
       {
-        name: "Username",
+        name: "User name",
         options: {
-          filter: false
+          filter: false,
+          sort:true
         }
       },
       {
@@ -149,13 +177,20 @@ class Guests extends React.Component {
       filterType: "dropdown",
       responsive: "scroll",
       selectableRows: false,
-      count:this.state.count,
       serverSide: true,
+      count:this.state.count,
       page: this.state.page,
+      rowsPerPage:this.state.item_per_page,
       onTableChange: (action, tableState) => {
         switch (action) {
           case 'changePage':
-            this.changePage(tableState.page);
+            this.changePage(tableState);
+            break;
+          case 'changeRowsPerPage':
+            this.changeRowPage(tableState);
+            break;
+          case 'sort':
+            this.sortRow(tableState);
             break;
         default:
             break;

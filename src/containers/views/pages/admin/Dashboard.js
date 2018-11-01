@@ -13,9 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NestedList  from '../../../../components/admin/NestedList';
-import Welcome from './welcome';
+import Vehicles from './vehicles';
 import Pending from './pending';
-import PendingDetail from './pendingdetail';
+import VehicleDetail from './vehicledetail';
 import MenuList from '../../../../config/AdminMenu.js';
 import {connect} from "react-redux";
 import {compose} from 'redux'
@@ -53,7 +53,7 @@ class Dashboard extends React.Component {
   __SessionCheck__(){
     
     if(this.props.state === CognitoState.LOGGED_IN){
-        this.props.history.push("/admin/welcome")
+        this.props.history.push("/admin/vehicles")
     }else{
          this.props.history.push("/login") 
     }
@@ -167,9 +167,9 @@ class Dashboard extends React.Component {
           
             <div className={classes.tableContainer}>
            <Switch>
-               <Route path="/admin/welcome" name="welcome" component={Welcome}/>
+               <Route path="/admin/vehicles" name="vehicles" component={Vehicles}/>
                <Route path="/admin/pending" name="pending" component={Pending}/>
-               <Route path="/admin/pendingdetail/:Vehicle" name="pendingdetail" component={PendingDetail}/>
+               <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
                <Route path="/admin/guests" name="guests" component={Guests}/>
                <Route path="/admin/hosts" name="hosts" component={Hosts}/>
                </Switch>

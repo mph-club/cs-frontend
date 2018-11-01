@@ -13,8 +13,6 @@ import DirectionsCarICon from '@material-ui/icons/DirectionsCar';
 import BarChartIcon from '@material-ui/icons/BarChart';
 
 import WatchLater from '@material-ui/icons/WatchLater';
-import CheckCircleOutline from '@material-ui/icons/CheckCircleOutline';
-import HighlightOff from '@material-ui/icons/HighlightOff';
 import { Link } from "react-router-dom";
 
 const styles = theme => ({
@@ -49,12 +47,6 @@ class NestedList extends React.Component {
 
 
       <List>
-        <ListItem button component={Link} to="/admin/welcome">
-          <ListItemIcon>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
         <ListItem button onClick={this.handleUserClick}>
           <ListItemIcon>
             <PeopleIcon />
@@ -78,35 +70,12 @@ class NestedList extends React.Component {
             </ListItem>
           </List>
         </Collapse>
-        <ListItem button onClick={this.handleClick} >
+        <ListItem button component={Link} to="/admin/vehicles">
           <ListItemIcon>
             <DirectionsCarICon />
           </ListItemIcon>
           <ListItemText inset primary="Vehicals" />
-          {this.state.vehicle_open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={this.state.vehicle_open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button className={classes.nested} component={Link} to="/admin/pending">
-              <ListItemIcon>
-                <WatchLater />
-              </ListItemIcon>
-              <ListItemText inset primary="Pending Vehicals" />
-            </ListItem>
-            <ListItem button className={classes.nested}>
-              <ListItemIcon>
-                <CheckCircleOutline />
-              </ListItemIcon>
-              <ListItemText inset primary="Approved Vehicals" />
-            </ListItem>
-            <ListItem button className={classes.nested}>
-              <ListItemIcon>
-                <HighlightOff />
-              </ListItemIcon>
-              <ListItemText inset primary="Rejected Vehicals" />
-            </ListItem>
-          </List>
-        </Collapse>
         <ListItem button>
           <ListItemIcon>
             <BarChartIcon />
