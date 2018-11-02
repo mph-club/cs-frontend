@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {compose} from 'redux'
-import MUIDataTable from "mui-datatables";
+import MUIDataTable from "../../../../mui-datatables/src";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
 import { Nstyles }   from './Styles/GuestsStyle';
@@ -10,53 +10,68 @@ import axios from 'axios';
 import Server from '../../../../config/server.js'
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import ConfirmationDialog from '../../dialogs/confirmation';
 
 class Guests extends React.Component {
     
-    constructor(props){
-        super(props);        
-        this.state = {
-            page: 0,
-            item_per_page: 10,
-            offset:0,
-            sort_by:'user_name',
-            sort_order:'desc',
-            table_data:[],
-            count:0,
-        }
-        this.getData = this.getData.bind(this);
-        this.sortRow = this.sortRow.bind(this);
-        
-        this.getData();
+    state = {
+        page: 0,
+        item_per_page: 10,
+        offset:0,
+        sort_by:'user_name',
+        sort_order:'asc',
+        table_data:[],
+        count:0,
+        confirm:false,
+        filter:[],
+        search:'',
+        filterList:[[],[],[],[],[],[],[]],
+        filterDataValue:[[],[],[],[],[],[],[]],
+    };
+    
+    componentDidMount() {        
+        var request = [];
+        request['page'] = this.state.page;
+        request['offset'] = this.state.offset;
+        request['item_per_page'] = this.state.item_per_page;
+        request['sort_by'] = this.state.sort_by;
+        request['sort_order'] = this.state.sort_order;
+        request['filter'] = this.state.filter;
+        request['search'] = this.state.search;
+        this.getData(request);  
     }
     
-    getData = () => {
-        var params ={
-                      offset:this.state.offset,
-                      limit:this.state.item_per_page,
-                      sort_by:this.state.sort_by,
-                      sort_order:this.state.sort_order
-                    };
-        this.getGuestDataAPI(params).then(response => {
-            var result = [];
-            for(var i=0;i< response.data.length;i++){
-                var arr = [];
-                for (var key in response.data[i]) {
-                  arr.push(response.data[i][key]);
-                }
-                result.push(arr);
-            }
-            this.setState({
-                table_data:result,
-                count:response.recordsTotal
-            });
-        });
-        
-    }
+    getData = (params) => {
+      this.getGuestDataAPI(params).then(response => {
+              var result = [];
+              for(var i=0;i< response.data.length;i++){
+                  var arr = [];
+                  for (var key in response.data[i]) {
+                    arr.push(response.data[i][key]);
+                  }
+                  result.push(arr);
+              }
+              this.setState({
+                  table_data:result,
+                  count:response.recordsTotal,
+                  page:params.page,
+                  offset:params.offset,
+                  item_per_page:params.item_per_page,
+                  sort_by:params.sort_by,
+                  sort_order:params.sort_order,
+                  filter:params.filter,
+                  search:params.search
+              });
+          });
+    };
     
     getGuestDataAPI = (params) => {
+        var filterData = '';
+        if(params.filter.length > 0){
+            filterData = JSON.stringify(params.filter);
+        }
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getGuestsList?limit='+params.limit+'&offset='+params.offset+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order,{}).then(function (response) {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getGuestsList?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
                 setTimeout(() => {
                     resolve(response.data);
                 }, 250);
@@ -68,34 +83,133 @@ class Guests extends React.Component {
         
     }
     
-    changePage = (request) => {
-        this.setState({
-            page:request.page,
-            offset:(request.page * this.state.item_per_page),
-            item_per_page:request.rowsPerPage
-        },() => { this.getData();});
+    sortRow = pageState => {
+
+       var request = [];
+          request['page'] = 0;
+          request['offset'] = (0 * pageState.rowsPerPage);
+          request['item_per_page'] = pageState.rowsPerPage;
+          request['sort_by'] = pageState.columns[pageState.activeColumn].name;
+          request['sort_order'] = pageState.columns[pageState.activeColumn].sortDirection;
+          request['filter'] = this.state.filter;
+          request['search'] = this.state.search;
+          this.getData(request);
     };
     
-    changeRowPage = (request) => {
-        this.setState({
-            page: 0,
-            offset:(0 * this.state.item_per_page),
-            item_per_page:request.rowsPerPage
-        },() => {this.getData();});
+    changePage = (pageState) => {
+          var request = [];
+          request['page'] = pageState.page;
+          request['offset'] = (request.page * pageState.rowsPerPage);
+          request['item_per_page'] = pageState.rowsPerPage;
+          request['sort_by'] = this.state.sort_by;
+          request['sort_order'] = this.state.sort_order;
+          request['filter'] = this.state.filter;
+          request['search'] = this.state.search;
+          this.getData(request);        
     };
     
-    sortRow = (request) => {
-        this.setState({
-            page: 0,
-            offset:(0 * this.state.item_per_page),
-            item_per_page:request.rowsPerPage,
-            sort_by:request.columns[request.activeColumn].name,
-            sort_order:request.columns[request.activeColumn].sortDirection
-        },() => {
-            this.getData();      
-            });
+    changeRowPage = (pageState) => {
+        var request = [];
+        request['page'] = 0;
+        request['offset'] = (0 * pageState.rowsPerPage);
+        request['item_per_page'] = pageState.rowsPerPage;
+        request['sort_by'] = this.state.sort_by;
+        request['sort_order'] = this.state.sort_order;
+        request['filter'] = this.state.filter;
+        request['search'] = this.state.search;
+        this.getData(request);
     };
     
+    filterData = (tableState) =>{
+        this.setState({
+            filterList: tableState.filterList,
+            filterDataValue:tableState.filterData,
+        }); 
+        
+        var filterArray = [];
+        for(var i=0;i<tableState.filterList.length;i++){
+            if(tableState.filterList[i].length > 0){
+                var filter = {};
+                filter[tableState.columns[i].name]=tableState.filterList[i];
+                filterArray.push(filter);
+            }
+        }
+        
+        var request = [];
+        request['page'] = tableState.page;
+        request['offset'] = (request.page * tableState.rowsPerPage);
+        request['item_per_page'] = tableState.rowsPerPage;
+        request['sort_by'] = this.state.sort_by;
+        request['sort_order'] = this.state.sort_order;
+        request['filter'] = filterArray;
+        request['search'] = this.state.search;
+        this.getData(request); 
+    }
+    
+    resetData = (tableState) =>{
+        var request = [];
+        request['page'] = 0;
+        request['offset'] = (0 * tableState.rowsPerPage);
+        request['item_per_page'] = tableState.rowsPerPage;
+        request['sort_by'] = 'user_name';
+        request['sort_order'] = 'asc';
+        request['filter'] = [];
+        request['search'] = '';
+        this.setState({
+            filterList: tableState.filterList,
+            filterDataValue:tableState.filterData,
+        });
+        this.getData(request); 
+    }
+    
+    searchData = (tableState) => {
+        if(tableState.searchText != null && tableState.searchText !== undefined){        
+            var request = [];
+            request['page'] = tableState.page;
+            request['offset'] = (request.page * tableState.rowsPerPage);
+            request['item_per_page'] = tableState.rowsPerPage;
+            request['sort_by'] = this.state.sort_by;
+            request['sort_order'] = this.state.sort_order;
+            request['filter'] = this.state.filter;
+            request['search'] = tableState.searchText;
+            this.getData(request);        
+        }else{
+            var request = [];
+            request['page'] = tableState.page;
+            request['offset'] = (request.page * tableState.rowsPerPage);
+            request['item_per_page'] = tableState.rowsPerPage;
+            request['sort_by'] = this.state.sort_by;
+            request['sort_order'] = this.state.sort_order;
+            request['filter'] = this.state.filter;
+            request['search'] = '';
+            this.getData(request);
+        }
+    }
+    
+    
+  handleOpenMessageDialog = (tableMeta) => {
+    debugger;  
+    this.setState({ 
+        message_to: tableMeta.rowData[1],
+        open_message_dialog: true,
+        open_message_success_dialog: false
+    });
+  };
+  
+  handleSendMessage = () => {
+    this.setState({ 
+        open_message_dialog: false,
+        open_message_success_dialog: true
+    });
+  };
+
+  handleConfirmClose = value => {
+    this.setState({ 
+            message_to: '',
+            open_message_dialog: false,
+            open_message_success_dialog: false
+        });   
+  };
     
     
   render() {
@@ -106,6 +220,7 @@ class Guests extends React.Component {
         options: {
           filter: false,
           sort:false,
+          download:false,
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
              <Avatar alt="Remy Sharp" src={`../images/users/${value}`} className={classes.avatar} />
@@ -116,7 +231,7 @@ class Guests extends React.Component {
       {
         name: "User name",
         options: {
-          filter: false,
+          filter: true,
           sort:true
         }
       },
@@ -144,11 +259,12 @@ class Guests extends React.Component {
       {
         name: "Message",
         options: {
-            filter: true,
+            filter: false,
             sort:false,
+            download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                   return (
-                    <Button variant="fab" mini color="primary" aria-label="Add" className={classes.button}>
+                    <Button variant="fab" mini color="primary" aria-label="Add" className={classes.button} onClick={() => this.handleOpenMessageDialog(tableMeta)}>
                         <Icon>send_icon</Icon>
                     </Button>
                   );
@@ -159,8 +275,9 @@ class Guests extends React.Component {
       {
         name: "View",
         options: {
-            filter: true,
+            filter: false,
             sort:false,
+            download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
                    <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button}>
@@ -172,9 +289,12 @@ class Guests extends React.Component {
       }
     ];
     
-    const options = {
+     const options = {
       filter: true,
-      filterType: "dropdown",
+      filterData:this.state.filterDataValue,
+      filterList:this.state.filterList,
+      searchText:this.state.search,
+      filterType: "checkbox",
       responsive: "scroll",
       selectableRows: false,
       serverSide: true,
@@ -192,6 +312,15 @@ class Guests extends React.Component {
           case 'sort':
             this.sortRow(tableState);
             break;
+          case 'filterChange':
+            this.filterData(tableState);
+            break;
+          case 'resetFilters':
+            this.resetData(tableState);
+            break;
+          case 'search':
+            this.searchData(tableState);
+            break;
         default:
             break;
         }
@@ -199,12 +328,48 @@ class Guests extends React.Component {
     };
 
     return (
-      <MUIDataTable
-        title={"Guests list"}
-        data={this.state.table_data}
-        columns={columns}
-        options={options}     
-      />
+      <div>       
+        <MUIDataTable
+          title={"Guests list"}
+          data={this.state.table_data}
+          columns={columns}
+          options={options}     
+        />
+        {(this.state.message_to !== undefined && this.state.message_to !== '') ?
+                  <ConfirmationDialog
+                    classes={{
+                        paper: classes.paper,
+                    }}
+                    open={this.state.open_message_dialog}
+                    onCancel={this.handleConfirmClose}
+                    onOk={this.handleSendMessage}
+                    value=""
+                    is_ok={true}
+                    is_cancel={true}
+                    ok_label="Send"
+                    cancel_label="Cancel"
+                    message={`Message to ${this.state.message_to}`}
+                    get_value={true}
+                  />
+              : ''}
+        {(this.state.message_to !== undefined && this.state.message_to !== '') ?
+                    <ConfirmationDialog
+                      classes={{
+                          paper: classes.paper,
+                      }}
+                      open={this.state.open_message_success_dialog}
+                      onCancel={this.handleConfirmClose}
+                      onOk={this.handleConfirmClose}
+                      value=""
+                      is_ok={true}
+                      is_cancel={false}
+                      ok_label="Ok"
+                      cancel_label="Cancel"
+                      message={`Message sent to ${this.state.message_to}`}
+                      get_value={false}
+                    />
+        : ''}
+        </div>        
     );
   }
 }

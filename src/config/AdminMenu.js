@@ -12,13 +12,17 @@ menu[2]= {
   label : 'Vehicles Detail',  
    url : 'vehicledetail'
 }
-menu[4]= {
-  label : 'Guests',  
-   url : 'guests'
-}
 menu[3]= {
+  label : 'Vehicles',  
+   url : 'vehicles'
+}
+menu[4]= {
   label : 'Hosts',  
    url : 'hosts'
+}
+menu[5]= {
+  label : 'Guests',  
+   url : 'guests'
 }
 
 export default menu;

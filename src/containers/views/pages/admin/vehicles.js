@@ -248,8 +248,8 @@ class Vehicles extends React.Component {
     
     
   render() {
-       const { classes } = this.props;
-      const columns = [
+    const { classes } = this.props;
+    const columns = [
     {
         name: "Picture",
         options: {

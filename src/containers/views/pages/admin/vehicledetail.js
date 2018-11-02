@@ -18,7 +18,9 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import {connect} from "react-redux";
 import {compose} from 'redux'
 import {NTitle,NTitle1,NTitle2,NCarouselbutton,Nstyles} from './Styles/VehicleDetailStyle';
-import ConfirmationDialog from '../../dialogs/approve';
+import ConfirmationDialog from '../../dialogs/confirmation';
+import axios from 'axios';
+import Server from '../../../../config/server.js';
 
 /*
  * Static list of images for Carousel
@@ -54,19 +56,49 @@ const vehicleSteps = [
 
 class VehicleDetail extends Component {
 
-  constructor(props){
-    super(props)
+    constructor(props){
 
-    this.state = {
-      direction: 'row',
-      justify: 'center',
-      activeStep: 0,
-      open_approve_dialog: false,
-      open_reject_dialog:false,
-      open_success_dialog:false
+        super(props)
+
+        this.state = {
+            direction: 'row',
+            justify: 'center',
+            activeStep: 0,
+            open_approve_dialog: false,
+            open_reject_dialog:false,
+            open_success_dialog:false,
+            vehicle_detail:{}
+        };
+
+    }
+  
+    componentDidMount() {
+        let vehicle_id = this.props.match.params.Vehicle;
+        this.getData(vehicle_id);
+    }
+
+    getData = (vehicle_id) => {
+      this.getVehicleDetailAPI(vehicle_id).then(response => {
+              this.setState({
+                  vehicle_detail:response.data
+              });
+          });
     };
-
-  }
+    
+    getVehicleDetailAPI = (vehicle_id) => {
+        return new Promise((resolve, reject) => {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/getItemById?vehicle_id='+vehicle_id,{}).then(function (response) {
+                setTimeout(() => {
+                    resolve(response.data);
+                }, 250);
+            }).catch((error) => {
+                resolve([{data:[],recordsTotal:0}]);
+            });
+   
+        });
+        
+    }
+  
 
   /*
    * Handle of right Arrow button for Carousel
@@ -91,21 +123,195 @@ class VehicleDetail extends Component {
   };
   
   handleClickOpenApproveDialog = () => {
-    this.setState({ open_approve_dialog: true,open_reject_dialog: false,open_success_dialog:false });
+    this.setState({ 
+        open_approve_dialog: true,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    });
   };
   
   handleClickOpenRejectDialog = () => {
-    this.setState({ open_approve_dialog: false,open_reject_dialog: true,open_success_dialog:false });
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: true,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    });
   };
 
-  handleClose = value => {
-    this.setState({ value, open_approve_dialog: false,open_reject_dialog: false,open_success_dialog:true});
+  handleConfirmClose = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    });    
   };
   
-  handleSuccessClose = value => {
-    this.setState({ value, open_approve_dialog: false,open_reject_dialog: false,open_success_dialog:false});
+  handleApprove = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:true,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    });  
+  }
+  
+  handleReject = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:true,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    });
+  }  
+    
+  handleClickOpenBlockDialog = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:true,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    }); 
+  } 
+    
+  handleClickBlock = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:true,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    }); 
+  }
+  
+  handleClickOpenUnblockDialog = value => {
+    this.setState({
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:true,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    }); 
+  };
+    
+  handleClickUnblock = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:true,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    }); 
+  }
+  
+  handleClickOpenDeleteDialog = value => {
+    this.setState({
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:true,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:false,
+    }); 
   };
 
+  handleClickDeleteConfirm = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:true,
+        open_success_delete_dialog:false,
+    }); 
+  }
+  handleClickDelete = value => {
+    this.setState({ 
+        open_approve_dialog: false,
+        open_reject_dialog: false,
+        open_success_approve_dialog:false,
+        open_success_decline_dialog:false,
+        open_block_dialog:false,
+        open_unblock_dialog:false,
+        open_success_block_dialog:false,
+        open_success_unblock_dialog:false,
+        open_delete_dialog:false,
+        open_delete_detail_dialog:false,
+        open_success_delete_dialog:true,
+    }); 
+  }
   render() {
     const { classes, theme } = this.props;
     const { alignItems, direction, activeStep } = this.state;
@@ -114,36 +320,194 @@ class VehicleDetail extends Component {
     <div>        
         <NTitle> Detail of Vehical</NTitle>
         <Paper className={classes.root}>
-            <ConfirmationDialog
-              classes={{
-                  paper: classes.paper,
-              }}
-              open={this.state.open_approve_dialog}
-              onClose={this.handleClose}
-              value="test"
-              message="Are you sure you want to approve the vehicle?"
-              buttons={[{label:'Ok'},{label:'Cancel'}]}
-            />
-            <ConfirmationDialog
-              classes={{
-                  paper: classes.paper,
-              }}
-              open={this.state.open_reject_dialog}
-              onClose={this.handleClose}
-              value="test"
-              message="Are you sure you want to reject the vehicle?"
-              buttons={[{label:'Ok'},{label:'Cancel'}]}
-            />
-            <ConfirmationDialog
-              classes={{
-                  paper: classes.paper,
-              }}
-              open={this.state.open_success_dialog}
-              onClose={this.handleSuccessClose}
-              value="test"
-              message="Vehicle listing is approved."
-              buttons={[{label:'Ok'}]}
-            />
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_approve_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleApprove}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Approve"
+                  cancel_label="Cancel"
+                  message={`Are you sure you want to approve ${this.state.vehicle_detail.hosted_by}'s listing?`}
+                  get_value={false}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_reject_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleReject}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Decline"
+                  cancel_label="Cancel"
+                  message={`Why are you declining ${this.state.vehicle_detail.hosted_by}'s listing?`}
+                  get_value={true}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_success_approve_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmClose}
+                  value=""
+                  is_ok={true}
+                  ok_label="Ok"
+                  is_cancel={false}                  
+                  cancel_label="Cancel"
+                  message={`${this.state.vehicle_detail.hosted_by}'s listing has been approved.`}
+                  get_value={false}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_success_decline_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmClose}
+                  value=""
+                  is_ok={true}
+                  is_cancel={false}
+                  ok_label="Ok"
+                  cancel_label="Cancel"
+                  message={`${this.state.vehicle_detail.hosted_by}'s listing is declined.`}
+                  get_value={false}
+                />
+            : ''}            
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_block_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleClickBlock}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Block"
+                  cancel_label="Cancel"
+                  message={`Why are you blocking ${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model}?`}
+                  get_value={true}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_success_block_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmClose}
+                  value=""
+                  is_ok={true}
+                  ok_label="Ok"
+                  is_cancel={false}                  
+                  cancel_label="Cancel"
+                  message={`${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model} has been blocked.`}
+                  get_value={false}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_unblock_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleClickUnblock}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Unblock"
+                  cancel_label="Cancel"
+                  message={`Why are you unblocking ${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model}?`}
+                  get_value={true}
+                />
+            : ''}            
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_success_unblock_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmClose}
+                  value=""
+                  is_ok={true}
+                  ok_label="Ok"
+                  is_cancel={false}                  
+                  cancel_label="Cancel"
+                  message={`${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model} has been unblocked.`}
+                  get_value={false}
+                />
+            : ''}
+         
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_delete_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleClickDeleteConfirm}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Yes"
+                  cancel_label="Cancel"
+                  message={`Are you sure you want to delete ${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model}?`}
+                  get_value={false}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_delete_detail_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleClickDelete}
+                  value=""
+                  is_ok={true}
+                  is_cancel={true}
+                  ok_label="Delete"
+                  cancel_label="Cancel"
+                  message={`Why are you deleting ${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model}?`}
+                  get_value={true}
+                />
+            : ''}
+            {this.state.vehicle_detail.hosted_by !== undefined ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.open_success_delete_dialog}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmClose}
+                  value=""
+                  is_ok={true}
+                  ok_label="Ok"
+                  is_cancel={false}                  
+                  cancel_label="Cancel"
+                  message={`${this.state.vehicle_detail.hosted_by}'s ${this.state.vehicle_detail.make} ${this.state.vehicle_detail.model} has been deleted.`}
+                  get_value={false}
+                />
+            : ''}
           <Grid container justify="center">
             <Grid item lg={8} className={classes.positionRelative}>
               <img
@@ -173,7 +537,7 @@ class VehicleDetail extends Component {
             <Grid item lg={8}>
               <Grid container spacing={24}>
                 <Grid item xs={6}>
-                  <NTitle1> Porsche Panama 2015</NTitle1>
+                  <NTitle1> {this.state.vehicle_detail.make} {this.state.vehicle_detail.model} {this.state.vehicle_detail.Year} </NTitle1>
                   <Typography variant="body1">10 Tips</Typography>
                   <Icon color="primary" style={{ fontSize: 14 }}>star</Icon>
                   <Icon color="primary" style={{ fontSize: 14 }}>star</Icon>
@@ -300,14 +664,33 @@ class VehicleDetail extends Component {
                   />
                   <Grid container spacing={24}>
                     <Grid item align="left" xs={6}>
-                      <Button variant="contained" size="large" color="primary" className={classes.button} onClick={this.handleClickOpenApproveDialog}>
-                        Approve
-                      </Button>
+                      {(this.state.vehicle_detail.status !== undefined && (this.state.vehicle_detail.status === 'Deny' || this.state.vehicle_detail.status === 'Pending')) ?
+                        <Button variant="contained" size="large" color="primary" className={classes.button} onClick={this.handleClickOpenApproveDialog}>
+                            Approve
+                        </Button>
+                    : ''}                    
+                    {this.state.vehicle_detail.status === 'Approve' ?
+                        <Button variant="contained" size="large" color="primary" className={classes.button} onClick={this.handleClickOpenBlockDialog}>
+                            Block
+                        </Button>
+                    : ''}                   
+                    {this.state.vehicle_detail.status === 'Block' ?
+                        <Button variant="contained" size="large" color="primary" className={classes.button} onClick={this.handleClickOpenUnblockDialog}>
+                            Unblock
+                        </Button>
+                    : ''}
                     </Grid>
                     <Grid item align="right" xs={6}>
-                      <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenRejectDialog}>
-                        Reject
-                      </Button>
+                      {(this.state.vehicle_detail.status !== undefined && this.state.vehicle_detail.status === 'Pending') ?
+                        <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenRejectDialog}>
+                         Decline
+                        </Button>
+                    : ''}
+                       {(this.state.vehicle_detail.status === 'Approve') || (this.state.vehicle_detail.status === 'Block') || (this.state.vehicle_detail.status === 'Unblock') || (this.state.vehicle_detail.status === 'Deny') ?
+                        <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenDeleteDialog}>
+                            Delete
+                        </Button>
+                    : ''}     
                     </Grid>
                   </Grid>
                 </Grid>
