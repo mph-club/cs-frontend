@@ -187,7 +187,6 @@ class Guests extends React.Component {
     }
     
 handleOpenMessageDialog = (tableMeta) => {
-    debugger;  
     this.setState({ 
         message_to: tableMeta.rowData[1],
         open_message_dialog: true,
@@ -209,6 +208,10 @@ handleConfirmClose = value => {
             open_message_success_dialog: false
         });   
 };
+
+__hostdetail__(row) {
+    this.props.history.push("/admin/hostdetail/" + row)
+} 
     
     
   render() {
@@ -300,7 +303,7 @@ handleConfirmClose = value => {
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
-                   <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button}>
+                   <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button} onClick={this.__hostdetail__.bind(this,value)}>
                     <Icon>pageview_icon</Icon>
                    </Button>
                 );

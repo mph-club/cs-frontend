@@ -16,6 +16,8 @@ import NestedList  from '../../../../components/admin/NestedList';
 import Vehicles from './vehicles';
 import Pending from './pending';
 import VehicleDetail from './vehicledetail';
+import GuestDetail from './guestdetail';
+import HostDetail from './hostdetail';
 import MenuList from '../../../../config/AdminMenu.js';
 import {connect} from "react-redux";
 import {compose} from 'redux'
@@ -172,6 +174,8 @@ class Dashboard extends React.Component {
                <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
                <Route path="/admin/guests" name="guests" component={Guests}/>
                <Route path="/admin/hosts" name="hosts" component={Hosts}/>
+               <Route path="/admin/guestdetail/:guestId" name="guestdetail" component={GuestDetail}/>
+               <Route path="/admin/hostdetail/:hostId" name="hostdetail" component={HostDetail}/>
                </Switch>
             </div>
           </main>

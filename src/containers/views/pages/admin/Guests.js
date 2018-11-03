@@ -188,7 +188,6 @@ class Guests extends React.Component {
     
     
   handleOpenMessageDialog = (tableMeta) => {
-    debugger;  
     this.setState({ 
         message_to: tableMeta.rowData[1],
         open_message_dialog: true,
@@ -210,7 +209,10 @@ class Guests extends React.Component {
             open_message_success_dialog: false
         });   
   };
-    
+  
+    __guestdetail__(row) {
+        this.props.history.push("/admin/guestdetail/" + row)
+    }  
     
   render() {
     const { classes } = this.props;
@@ -280,7 +282,7 @@ class Guests extends React.Component {
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
-                   <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button}>
+                   <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button} onClick={this.__guestdetail__.bind(this,value)}>
                     <Icon>pageview_icon</Icon>
                    </Button>
                 );
@@ -350,6 +352,7 @@ class Guests extends React.Component {
                     cancel_label="Cancel"
                     message={`Message to ${this.state.message_to}`}
                     get_value={true}
+                    value_field_name='Message'
                   />
               : ''}
         {(this.state.message_to !== undefined && this.state.message_to !== '') ?

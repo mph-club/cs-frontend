@@ -24,5 +24,13 @@ menu[5]= {
   label : 'Guests',  
    url : 'guests'
 }
+menu[6]= {
+  label : 'Guest Detail',  
+  url : 'guestdetail'
+}
+menu[7]= {
+  label : 'Host Detail',  
+  url : 'hostdetail'
+}
 
 export default menu;

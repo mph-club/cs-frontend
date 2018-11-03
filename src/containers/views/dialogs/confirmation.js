@@ -49,7 +49,7 @@ class ConfirmationDialog extends React.Component {
             {this.props.get_value ?
             <TextField
                     id="filled-multiline-static"
-                    label="Reason"
+                    label={(this.props.value_field_name !== undefined ? this.props.value_field_name : 'Reason')}
                     multiline
                     rows="10"
                     defaultValue=""
