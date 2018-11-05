@@ -56,6 +56,8 @@ class Dashboard extends React.Component {
     
     if(this.props.state === CognitoState.LOGGED_IN){
         this.props.history.push("/admin/vehicles")
+    }else if(this.props.state === CognitoState.LOGGING_IN){
+        // We can show loader here
     }else{
          this.props.history.push("/login") 
     }
@@ -115,7 +117,7 @@ class Dashboard extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {url}
               </Typography>
-              {(this.props.state === CognitoState.LOGGED_IN) ?
+              {(this.props.state === CognitoState.LOGGED_IN || this.props.state === CognitoState.LOGGING_IN) ?
                 <div>
                     <IconButton
                       aria-owns={open ? 'menu-appbar' : null}
