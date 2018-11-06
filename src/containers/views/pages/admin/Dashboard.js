@@ -23,6 +23,7 @@ import {connect} from "react-redux";
 import {compose} from 'redux'
 import { Switch, Route } from "react-router-dom";
 import DashboardStyle from './Styles/DashboardStyle';
+import AuthenticationPresenter from "../../../../account/login/presenter.js"
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -53,15 +54,11 @@ class Dashboard extends React.Component {
    */
   
   __SessionCheck__(){
-    
-    if(this.props.state === CognitoState.LOGGED_IN){
-        this.props.history.push("/admin/vehicles")
-    }else if(this.props.state === CognitoState.LOGGING_IN){
-        // We can show loader here
+    if(this.props.SessionReducer.auth){
+        this.props.history.push(this.props.location.pathname)
     }else{
          this.props.history.push("/login") 
     }
-
   }
 
   handleDrawerOpen = () => {
@@ -117,7 +114,7 @@ class Dashboard extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {url}
               </Typography>
-              {(this.props.state === CognitoState.LOGGED_IN || this.props.state === CognitoState.LOGGING_IN) ?
+              {(this.props.SessionReducer.auth) ?
                 <div>
                     <IconButton
                       aria-owns={open ? 'menu-appbar' : null}
@@ -142,9 +139,7 @@ class Dashboard extends React.Component {
                       onClose={this.handleClose}
                       >
                       <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                      <Logout>
-                        <LogoutButton />
-                      </Logout>
+                      <MenuItem onClick={()=>AuthenticationPresenter.Logout(this)}>Logout</MenuItem>
                     </Menu>
                   </div>
               : this.props.history.push("/login")}
@@ -189,18 +184,23 @@ class Dashboard extends React.Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
-  user: PropTypes.object,
-  attributes: PropTypes.object,
-  state: PropTypes.string,
 };
 
-const mapStateToProps = state => ({
-  state: state.cognito.state,
-  user: state.cognito.user,
-  attributes: state.cognito.attributes,
-});
+const mapStateToProps = (state) => {
+  return {
+      SessionReducer: state.SessionReducer
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        RunRedux: (data) => {
+            dispatch(data);
+        },
+    };
+};
 
 export default compose(
                 withStyles(DashboardStyle),
-                connect(mapStateToProps, null)
+                connect(mapStateToProps, mapDispatchToProps)
                 )(Dashboard);

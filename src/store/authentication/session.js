@@ -4,10 +4,11 @@ const SessionReducer = (state = UserAuthenticationModel.GetCredential(),action) 
         case "CreateUserSession":
             state = {
                 ...state,
-                email: null,
-                token: action.payload.access_token,
+                email: action.payload.getIdToken().payload.email,
+                token: action.payload.getAccessToken().getJwtToken(),
+                refresh_token:action.payload.getRefreshToken().getToken(),
                 auth :true,
-                name: null,
+                name: action.payload.getIdToken().payload.email,
                 alias:null,
                 admin:null
             };
@@ -19,6 +20,7 @@ const SessionReducer = (state = UserAuthenticationModel.GetCredential(),action) 
                 ...state,
                 email: null,
                 token: null,
+                refresh_token: null,
                 auth :false,
                 name: null,
                 alias:null,

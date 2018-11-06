@@ -7,11 +7,12 @@ export default {
     if(Credential == null){
       return{
         email: null,
-        token: action.payload.access_token,
+        token: null,
+        refresh_token: null,
         auth :true,
         name: null,
         alias:null,
-        admin:null
+        admin:null,
         props:{
             first_name:null,
             last_name:null,

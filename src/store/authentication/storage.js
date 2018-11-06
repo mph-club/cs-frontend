@@ -19,6 +19,7 @@ export default {
       return{
         email: null,
         token: null,
+        refresh_token: null,
         auth :false,
         name: null,
         alias:null,
