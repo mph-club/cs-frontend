@@ -3,21 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Icon from '@material-ui/core/Icon';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import {connect} from "react-redux";
 import {compose} from 'redux'
-import {NTitle,NTitle1,NTitle2,NCarouselbutton,Nstyles} from './Styles/GuestDetailStyle';
+import {NTitle,NTitle1,Nstyles} from './Styles/GuestDetailStyle';
 import axios from 'axios';
 import Server from '../../../../config/server.js';
 import ConfirmationDialog from '../../dialogs/confirmation';
@@ -143,9 +134,8 @@ class GuestDetail extends Component {
   
 
   render() {
-    const { classes, theme } = this.props;
-    const { alignItems, direction, activeStep } = this.state;
-   
+    const { classes } = this.props;
+    
     return (
       <div>
         <NTitle> Detail of Guest</NTitle>

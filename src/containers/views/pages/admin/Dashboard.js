@@ -28,8 +28,6 @@ import AuthenticationPresenter from "../../../../account/login/presenter.js"
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { CognitoState, Logout } from 'react-cognito';
-import LogoutButton from '../../../../components/auth/LogoutButton'
 import Guests from './Guests';
 import Hosts from './Hosts';
 

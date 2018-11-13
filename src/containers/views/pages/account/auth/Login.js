@@ -17,6 +17,7 @@ import Presenter from '../../../../../account/login/presenter';
 import { connect } from "react-redux";
 import { compose } from 'redux'
 import { LoginStyle,NLabel as Label } from './Styles/LoginStyle';
+import ConfirmationDialog from '../../../dialogs/confirmation';
 
 class Login extends Component {
 
@@ -43,13 +44,15 @@ class Login extends Component {
           message:"",
         },
          loading:false,
-         error:false
+         error:false,
+         verified:false
       }
 
       this.__Login__ = this.__Login__.bind(this)
       this.__TogglePostRequest__ = this.__TogglePostRequest__.bind(this)
       this.__OnLoginSucceed__= this.__OnLoginSucceed__.bind(this)
       this.__OnLoginFailed__= this.__OnLoginFailed__.bind(this)
+      this.__signup__= this.__signup__.bind(this)      
 
     }
 
@@ -94,11 +97,36 @@ class Login extends Component {
     }
 
     __OnLoginFailed__(response){
-      this.setState({
-        error:response.message,
-        loading:!this.state.loading
-      })
+        if(response.code === 'UserNotConfirmedException'){
+            this.setState({
+              error:response.message,
+              loading:!this.state.loading,
+              verified:true
+            })
+        }else{
+            this.setState({
+              error:response.message,
+              loading:!this.state.loading
+            })
+        }
     }
+    
+    __signup__(){
+        this.props.history.push("/signup")
+    }
+    
+    handleConfirmClose = value => {
+        this.setState({ 
+            verified:false
+        });
+    };
+    
+    handleConfirmOk = value => {
+        this.setState({ 
+            verified:false
+        });
+        this.props.history.push("/verify/"+this.state.email.value);
+    };
 
   render() {
   const { classes } = this.props;
@@ -130,8 +158,8 @@ class Login extends Component {
                   }
                 }
                 )} />
-            </FormControl>
-                     {this.state.email.error?<Label >{'*'+this.state.email.message}</Label>:''} 
+                     {this.state.email.error?<Label >{'*'+this.state.email.message}</Label>:''}
+            </FormControl> 
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
               <Input
@@ -148,22 +176,45 @@ class Login extends Component {
                             }
                           )}
               />
-            </FormControl>
             {this.state.password.error?<Label >{'*'+this.state.password.message}</Label>:''}
+            </FormControl>
             <Button
               disabled={loading}
-              fullWidth
               variant="raised"
               color="primary"
               className={classes.submit}
               onClick={this.__Login__}                  
             >
-         
-              Sign in
-               {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            Sign in
+            {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            </Button>
+            <Button
+              variant="raised"
+              color="secondary"
+              className={classes.submit}
+              onClick={this.__signup__}                  
+            >
+            Sign up
             </Button>
             
           </form>
+            {this.state.verified ?
+                <ConfirmationDialog
+                  classes={{
+                      paper: classes.paper,
+                  }}
+                  open={this.state.verified}
+                  onCancel={this.handleConfirmClose}
+                  onOk={this.handleConfirmOk}
+                  value=""
+                  is_ok={true}
+                  ok_label="Ok"
+                  is_cancel={true}                  
+                  cancel_label="Cancel"
+                  message='You account is not confirmed, do you want to confirm ?'
+                  get_value={false}
+                />
+            : ''}
         </Paper>
       </main>
     </React.Fragment>

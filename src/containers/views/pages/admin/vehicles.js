@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MUIDataTable from "../../../../mui-datatables/src";
+import MUIDataTable from "mui-datatables";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
 import VehicleStatus from '../../../../components/vehicle/VehicleStatus';
@@ -177,8 +177,8 @@ class Vehicles extends React.Component {
     }
     
     searchData = (tableState) => {
+        var request = [];            
         if(tableState.searchText != null && tableState.searchText !== undefined){        
-            var request = [];
             request['page'] = tableState.page;
             request['offset'] = (request.page * tableState.rowsPerPage);
             request['item_per_page'] = tableState.rowsPerPage;
@@ -188,7 +188,6 @@ class Vehicles extends React.Component {
             request['search'] = tableState.searchText;
             this.getData(request);        
         }else{
-            var request = [];
             request['page'] = tableState.page;
             request['offset'] = (request.page * tableState.rowsPerPage);
             request['item_per_page'] = tableState.rowsPerPage;

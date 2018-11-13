@@ -1,20 +1,11 @@
-import axios from 'axios';
-import Server from '../../config/server.js'
 import {CreateUserSessionProperties,RemoveUserSessionProperties} from '../../store/authentication/presenter.js'
 import Cognito from '../../config/cognito'
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-
-/*
- * axios library used for calling rest api
- */ 
 
 export default {
 
   // Authentication Api Call to server.  
   Auth: function(params){
     var AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-        
-        var CognitoUserPool = AmazonCognitoIdentity.CognitoUserPool;
         
         var authenticationData = {
            Username : params.data.emailuser,

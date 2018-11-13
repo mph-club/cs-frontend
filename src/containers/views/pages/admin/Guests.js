@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {compose} from 'redux'
-import MUIDataTable from "../../../../mui-datatables/src";
+import MUIDataTable from "mui-datatables";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
 import { Nstyles }   from './Styles/GuestsStyle';
@@ -163,8 +163,8 @@ class Guests extends React.Component {
     }
     
     searchData = (tableState) => {
+        var request = [];            
         if(tableState.searchText != null && tableState.searchText !== undefined){        
-            var request = [];
             request['page'] = tableState.page;
             request['offset'] = (request.page * tableState.rowsPerPage);
             request['item_per_page'] = tableState.rowsPerPage;
@@ -174,7 +174,6 @@ class Guests extends React.Component {
             request['search'] = tableState.searchText;
             this.getData(request);        
         }else{
-            var request = [];
             request['page'] = tableState.page;
             request['offset'] = (request.page * tableState.rowsPerPage);
             request['item_per_page'] = tableState.rowsPerPage;
