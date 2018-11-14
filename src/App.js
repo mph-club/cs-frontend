@@ -9,13 +9,13 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 class App extends Component {
   render() {
     return (
-        <Router>
+        <Router basename={'/cs-dashboard'}>
           <div>
-            <Route exact path="/" component={Login}/>      
-            <Route  path="/login" component={Login} /> 
-            <Route exact path="/signup" component={Signup} />
-            <Route path="/verify/:email" component={Verify} />
-            <Route  path="/admin" component={AdminDashboard} />      
+            <Route exact path={`${process.env.PUBLIC_URL}`} component={Login}/>      
+            <Route  path={`${process.env.PUBLIC_URL}/login`} component={Login} /> 
+            <Route exact path={`${process.env.PUBLIC_URL}/signup`} component={Signup} />
+            <Route path={`${process.env.PUBLIC_URL}/verify/:email`} component={Verify} />
+            <Route  path={`${process.env.PUBLIC_URL}/admin`} component={AdminDashboard} />      
           </div>
        </Router>
     );

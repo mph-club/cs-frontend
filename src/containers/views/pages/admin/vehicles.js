@@ -257,7 +257,7 @@ class Vehicles extends React.Component {
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
-                 <Avatar alt="Remy Sharp" src={`../images/${value}`} className={classes.avatar} />
+                 <Avatar alt="Remy Sharp" src={`/images/${value}`} className={classes.avatar} />
                 );
             }
         }

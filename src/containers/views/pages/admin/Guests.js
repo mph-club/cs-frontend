@@ -224,7 +224,7 @@ class Guests extends React.Component {
           download:false,
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
-             <Avatar alt="Remy Sharp" src={`../images/users/${value}`} className={classes.avatar} />
+             <Avatar alt="Remy Sharp" src={`/images/users/${value}`} className={classes.avatar} />
             );
           }
         }

@@ -58,7 +58,7 @@ class Pending extends Component {
                 return (
                   <TableRow key={row.id}>
                     <TableCell padding="none">
-                      <Avatar alt="Remy Sharp" src={`../images/${row.src}`} className={classes.avatar} />
+                      <Avatar alt="Remy Sharp" src={`/images/${row.src}`} className={classes.avatar} />
                     </TableCell>
                     <TableCell>
                       <Typography component="h2" variant="h1">

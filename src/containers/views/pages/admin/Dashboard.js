@@ -164,13 +164,13 @@ class Dashboard extends React.Component {
           
             <div className={classes.tableContainer}>
            <Switch>
-               <Route path="/admin/vehicles" name="vehicles" component={Vehicles}/>
-               <Route path="/admin/pending" name="pending" component={Pending}/>
-               <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
-               <Route path="/admin/guests" name="guests" component={Guests}/>
-               <Route path="/admin/hosts" name="hosts" component={Hosts}/>
-               <Route path="/admin/guestdetail/:guestId" name="guestdetail" component={GuestDetail}/>
-               <Route path="/admin/hostdetail/:hostId" name="hostdetail" component={HostDetail}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/vehicles`} name="vehicles" component={Vehicles}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/pending`} name="pending" component={Pending}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/vehicledetail/:Vehicle`} name="vehicledetail" component={VehicleDetail}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/guests`} name="guests" component={Guests}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/hosts`} name="hosts" component={Hosts}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/guestdetail/:guestId`} name="guestdetail" component={GuestDetail}/>
+               <Route path={`${process.env.PUBLIC_URL}//admin/hostdetail/:hostId"`} name="hostdetail" component={HostDetail}/>
                </Switch>
             </div>
           </main>
