@@ -13,6 +13,7 @@ import DirectionsCarICon from '@material-ui/icons/DirectionsCar';
 import BarChartIcon from '@material-ui/icons/BarChart';
 
 import WatchLater from '@material-ui/icons/WatchLater';
+import AccountIcon from '@material-ui/icons/AccountCircle';
 import { Link } from "react-router-dom";
 
 const styles = theme => ({
@@ -67,6 +68,12 @@ class NestedList extends React.Component {
                 <WatchLater />
               </ListItemIcon>
               <ListItemText inset primary="Hosts" />
+            </ListItem>
+            <ListItem button className={classes.nested} component={Link} to="/admin/createuser">
+              <ListItemIcon>
+                <AccountIcon />
+              </ListItemIcon>
+              <ListItemText inset primary="Create User" />
             </ListItem>
           </List>
         </Collapse>

@@ -30,7 +30,6 @@ const styles = theme => ({
       },
       submit: {
         marginTop: theme.spacing.unit * 3,
-        marginRight: theme.spacing.unit * 2,
       },
        buttonProgress: {
         color: green[500],

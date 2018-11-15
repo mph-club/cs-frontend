@@ -30,6 +30,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Guests from './Guests';
 import Hosts from './Hosts';
+import createUser from './createUser';
 
 class Dashboard extends React.Component {
 
@@ -170,7 +171,8 @@ class Dashboard extends React.Component {
                <Route path={`${process.env.PUBLIC_URL}/admin/guests`} name="guests" component={Guests}/>
                <Route path={`${process.env.PUBLIC_URL}/admin/hosts`} name="hosts" component={Hosts}/>
                <Route path={`${process.env.PUBLIC_URL}/admin/guestdetail/:guestId`} name="guestdetail" component={GuestDetail}/>
-               <Route path={`${process.env.PUBLIC_URL}//admin/hostdetail/:hostId"`} name="hostdetail" component={HostDetail}/>
+               <Route path={`${process.env.PUBLIC_URL}/admin/hostdetail/:hostId"`} name="hostdetail" component={HostDetail}/>
+	       <Route path={`${process.env.PUBLIC_URL}/admin/createuser`} name="createuser" component={createUser}/>
                </Switch>
             </div>
           </main>

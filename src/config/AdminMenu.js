@@ -32,5 +32,9 @@ menu[7]= {
   label : 'Host Detail',  
   url : 'hostdetail'
 }
+menu[8]= {
+  label : 'Create User',  
+  url : 'createuser'
+}
 
 export default menu;

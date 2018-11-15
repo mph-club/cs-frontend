@@ -13,18 +13,5 @@ export default {
     Model.SignUp(params)
   	  
   },
-  
-  UserConfirm:function(params){
-  	  
-    Model.UserConfirm(params)
-  	  
-  },
-  
-  resendCode:function(params){
-  	  
-    Model.resendCode(params)
-  	  
-  },
-  
 
 }
