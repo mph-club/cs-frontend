@@ -10,9 +10,9 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import PeopleIcon from '@material-ui/icons/People';
 import DirectionsCarICon from '@material-ui/icons/DirectionsCar';
-import BarChartIcon from '@material-ui/icons/BarChart';
+//import BarChartIcon from '@material-ui/icons/BarChart';
 
-import WatchLater from '@material-ui/icons/WatchLater';
+//import WatchLater from '@material-ui/icons/WatchLater';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import { Link } from "react-router-dom";
 
@@ -57,38 +57,22 @@ class NestedList extends React.Component {
         </ListItem>
         <Collapse in={this.state.user_open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button className={classes.nested} component={Link} to="/admin/guests">
-              <ListItemIcon>
-                <WatchLater />
-              </ListItemIcon>
-              <ListItemText inset primary="Guests" />
-            </ListItem>
-            <ListItem button className={classes.nested} component={Link} to="/admin/hosts">
-              <ListItemIcon>
-                <WatchLater />
-              </ListItemIcon>
-              <ListItemText inset primary="Hosts" />
-            </ListItem>
-            <ListItem button className={classes.nested} component={Link} to="/admin/createuser">
+            <ListItem button className={classes.nested} component={Link} to="/admin/users">
               <ListItemIcon>
                 <AccountIcon />
               </ListItemIcon>
-              <ListItemText inset primary="Create User" />
+              <ListItemText inset primary="List User" />
             </ListItem>
+            
           </List>
         </Collapse>
         <ListItem button component={Link} to="/admin/vehicles">
           <ListItemIcon>
             <DirectionsCarICon />
           </ListItemIcon>
-          <ListItemText inset primary="Vehicals" />
+          <ListItemText inset primary="Vehicles" />
         </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <BarChartIcon />
-          </ListItemIcon>
-          <ListItemText primary="Reports" />
-        </ListItem>
+       
 
 
       </List>

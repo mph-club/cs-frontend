@@ -42,7 +42,7 @@ class GuestDetail extends Component {
     
     getGuestDetailAPI = (guest_id) => {
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getItemById?user_id='+guest_id,{}).then(function (response) {
+            axios.get(Server.VEHICAL.API + 'getUserById?user_id='+guest_id,{}).then(function (response) {
                 setTimeout(() => {
                     resolve(response.data);
                 }, 250);

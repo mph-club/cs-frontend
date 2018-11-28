@@ -16,22 +16,23 @@ import NestedList  from '../../../../components/admin/NestedList';
 import Vehicles from './vehicles';
 import Pending from './pending';
 import VehicleDetail from './vehicledetail';
-import GuestDetail from './guestdetail';
-import HostDetail from './hostdetail';
+//import GuestDetail from './guestdetail';
+//import HostDetail from './hostdetail';
+import UserDetail from './userdetail';
 import MenuList from '../../../../config/AdminMenu.js';
 import {connect} from "react-redux";
 import {compose} from 'redux'
 import { Switch, Route } from "react-router-dom";
 import DashboardStyle from './Styles/DashboardStyle';
 import AuthenticationPresenter from "../../../../account/login/presenter.js"
-
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import Guests from './Guests';
-import Hosts from './Hosts';
-import createUser from './createUser';
-
+import Users from './Users';
+//import Guests from './Guests';
+//import Hosts from './Hosts';
+//import createUser from './createUser';
+import Utils from '../../../../helpers/utils'
 class Dashboard extends React.Component {
 
   constructor(props){
@@ -44,6 +45,7 @@ class Dashboard extends React.Component {
     };
     
     // Check user authentication initally.
+    this.__SessionCheck__= this.__SessionCheck__.bind(this)
     this.__SessionCheck__()
   }
   
@@ -53,10 +55,10 @@ class Dashboard extends React.Component {
    */
   
   __SessionCheck__(){
-    if(this.props.SessionReducer.auth){
-        this.props.history.push(this.props.location.pathname)
+    if(Utils.CheckSession(this.state, this.props, this)){
+        this.props.history.push(this.props.location.pathname)   
     }else{
-         this.props.history.push("/login") 
+        this.props.history.push("/login")
     }
   }
 
@@ -137,7 +139,7 @@ class Dashboard extends React.Component {
                       open={open}
                       onClose={this.handleClose}
                       >
-                      <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                
                       <MenuItem onClick={()=>AuthenticationPresenter.Logout(this)}>Logout</MenuItem>
                     </Menu>
                   </div>
@@ -149,7 +151,7 @@ class Dashboard extends React.Component {
             classes={{
               paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
             }}
-            open='menu-appbar'
+            open={true}
           >
             <div className={classes.toolbarIcon}>
               <IconButton onClick={this.handleDrawerClose}>
@@ -165,14 +167,12 @@ class Dashboard extends React.Component {
           
             <div className={classes.tableContainer}>
            <Switch>
-               <Route path={`${process.env.PUBLIC_URL}/admin/vehicles`} name="vehicles" component={Vehicles}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/pending`} name="pending" component={Pending}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/vehicledetail/:Vehicle`} name="vehicledetail" component={VehicleDetail}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/guests`} name="guests" component={Guests}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/hosts`} name="hosts" component={Hosts}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/guestdetail/:guestId`} name="guestdetail" component={GuestDetail}/>
-               <Route path={`${process.env.PUBLIC_URL}/admin/hostdetail/:hostId"`} name="hostdetail" component={HostDetail}/>
-	       <Route path={`${process.env.PUBLIC_URL}/admin/createuser`} name="createuser" component={createUser}/>
+               <Route path="/admin/vehicles" name="vehicles" component={Vehicles}/>
+               <Route path="/admin/pending" name="pending" component={Pending}/>
+               <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
+               <Route path="/admin/users/" name="users" component={Users}/>
+               <Route path="/admin/userdetail/:User" name="userdetail" component={UserDetail}/>
+              
                </Switch>
             </div>
           </main>

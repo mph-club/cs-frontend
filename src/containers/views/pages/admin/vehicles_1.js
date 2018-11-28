@@ -1,48 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from "react-redux";
-import {compose} from 'redux'
 import MUIDataTable from "mui-datatables";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
-import { Nstyles }   from './Styles/HostsStyle';
+import VehicleStatus from '../../../../components/vehicle/VehicleStatus';
+import { Nstyles }   from './Styles/VehiclesStyle';
 import axios from 'axios';
-import Server from '../../../../config/server.js'
+import Server from '../../../../config/server.js';
+import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import ConfirmationDialog from '../../dialogs/confirmation';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Dialog from '@material-ui/core/Dialog';
+import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
-class Guests extends React.Component {
+class Vehicles extends React.Component {
     
     state = {
         page: 0,
         item_per_page: 10,
         offset:0,
-        sort_by:'user_name',
+        sort_by:'Make',
         sort_order:'asc',
         table_data:[],
         count:0,
         confirm:false,
         filter:[],
         search:'',
-        filterList:[[],[],[],[],[],[],[],[],[],[]],
-        filterDataValue:[[],[],[],[],[],[],[],[],[],[]],
+        filterList:[[],[],[],[],[],[],[]],
+        filterDataValue:[[],[],[],[],[],[],[]],
     };
-    
+
     componentDidMount() {        
-        var request = [];
-        request['page'] = this.state.page;
-        request['offset'] = this.state.offset;
-        request['item_per_page'] = this.state.item_per_page;
-        request['sort_by'] = this.state.sort_by;
-        request['sort_order'] = this.state.sort_order;
-        request['filter'] = this.state.filter;
-        request['search'] = this.state.search;
-        this.getData(request);  
+          var request = [];
+          request['page'] = this.state.page;
+          request['offset'] = this.state.offset;
+          request['item_per_page'] = this.state.item_per_page;
+          request['sort_by'] = this.state.sort_by;
+          request['sort_order'] = this.state.sort_order;
+          request['filter'] = this.state.filter;
+          request['search'] = this.state.search;
+          this.getData(request);  
     }
-    
+
     getData = (params) => {
-      this.getHostDataAPI(params).then(response => {
+      this.getVehicleDataAPI(params).then(response => {
               var result = [];
               for(var i=0;i< response.data.length;i++){
                   var arr = [];
@@ -65,13 +67,13 @@ class Guests extends React.Component {
           });
     };
     
-    getHostDataAPI = (params) => {
+    getVehicleDataAPI = (params) => {
         var filterData = '';
         if(params.filter.length > 0){
             filterData = JSON.stringify(params.filter);
         }
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.API + 'getHostsList?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/getItems?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
                 setTimeout(() => {
                     resolve(response.data);
                 }, 250);
@@ -82,7 +84,19 @@ class Guests extends React.Component {
         });
         
     }
-        
+    
+    deleteVehicleDataAPI = (params) => {
+        return new Promise((resolve, reject) => {
+            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/delete?data='+JSON.stringify(params)).then(function (response) {
+                setTimeout(() => {
+                    resolve(response);
+                }, 250);
+            }).catch((error) => {
+                resolve([{data:[],recordsTotal:0}]);
+            });   
+        });        
+    } 
+
     sortRow = pageState => {
 
        var request = [];
@@ -151,7 +165,7 @@ class Guests extends React.Component {
         request['page'] = 0;
         request['offset'] = (0 * tableState.rowsPerPage);
         request['item_per_page'] = tableState.rowsPerPage;
-        request['sort_by'] = 'user_name';
+        request['sort_by'] = 'Make';
         request['sort_order'] = 'asc';
         request['filter'] = [];
         request['search'] = '';
@@ -163,8 +177,8 @@ class Guests extends React.Component {
     }
     
     searchData = (tableState) => {
-        var request = [];
-        if(tableState.searchText != null && tableState.searchText !== undefined){
+        var request = [];            
+        if(tableState.searchText != null && tableState.searchText !== undefined){        
             request['page'] = tableState.page;
             request['offset'] = (request.page * tableState.rowsPerPage);
             request['item_per_page'] = tableState.rowsPerPage;
@@ -185,32 +199,51 @@ class Guests extends React.Component {
         }
     }
     
-handleOpenMessageDialog = (tableMeta) => {
-    this.setState({ 
-        message_to: tableMeta.rowData[1],
-        open_message_dialog: true,
-        open_message_success_dialog: false
-    });
-};
-  
-handleSendMessage = () => {
-    this.setState({ 
-        open_message_dialog: false,
-        open_message_success_dialog: true
-    });
-};
+    deleteVehicles = (rows) => {
+        var params ={ data:rows };
+        this.deleteVehicleDataAPI(params).then(response => {
+            if(response){
+                var request = [];
+                request['page'] = this.state.page;
+                request['offset'] = this.state.offset;
+                request['item_per_page'] = this.state.item_per_page;
+                request['sort_by'] = this.state.sort_by;
+                request['sort_order'] = this.state.sort_order;                
+                request['search'] = this.state.search;
+                this.getData(request); 
+            }
+        });        
+    }
+    
+    deleteRowConfirm = (rowsDeleted) => {
+        this.setState({
+            confirm: true,
+            rows:rowsDeleted
+        });     
+    };
+    
+    _handleDeleteRow = () =>{
+        this.setState({
+            confirm: false
+        },() => {
+            var vehicles = [];
+            for(var i=0;i<this.state.rows.data.length;i++){                
+                vehicles.push(this.state.table_data[this.state.rows.data[i]['dataIndex']][6]);
+            }
+            this.deleteVehicles(vehicles);
+        });
+    }
 
-handleConfirmClose = value => {
-    this.setState({ 
-            message_to: '',
-            open_message_dialog: false,
-            open_message_success_dialog: false
-        });   
-};
-
-__hostdetail__(row) {
-    this.props.history.push("/admin/hostdetail/" + row)
-} 
+    _handleConfirmCancel = () =>{
+        this.setState({
+            confirm: false,
+            rows:[]
+        });
+    }
+    
+    __vehicledetail__(row) {
+        this.props.history.push("/admin/vehicledetail/" + row)
+    }
     
     
   render() {
@@ -219,80 +252,53 @@ __hostdetail__(row) {
     {
         name: "Picture",
         options: {
-          filter: false,
-          sort:false,
-          download:false,
-          customBodyRender: (value, tableMeta, updateValue) => {
-            return (
-             <Avatar alt="Remy Sharp" src={`../images/users/${value}`} className={classes.avatar} />
-            );
-          }
-        }
-      },
-      {
-        name: "User name",
-        options: {
-          filter: true,
-          sort:true
-        }
-      },
-      {
-        name: "Phone Number",
-        options: {
-          filter: true
-        }
-      },
-      {
-        name: "Email",
-        options: {
-          filter: true,
-          sort:true,
-        }
-      },
-     
-      {
-        name: "Status",
-        options: {
-          filter: true,
-        }
-      },
-     
-      {
-        name: "License",
-        options: {
-          filter: true,
-        }
-      },
-     
-      {
-        name: "Listed Vehicles",
-        options: {
-          filter: true,
-        }
-      },
-     
-      {
-        name: "Pending Vehicles",
-        options: {
-          filter: true,
-        }
-      },
-     
-      {
-        name: "Message",
-        options: {
             filter: false,
             sort:false,
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
-                  return (
-                    <Button variant="fab" mini color="primary" aria-label="Add" className={classes.button} onClick={() => this.handleOpenMessageDialog(tableMeta)}>
-                        <Icon>send_icon</Icon>
-                    </Button>
-                  );
+                return (
+                 <Avatar alt="Remy Sharp" src={`../images/${value}`} className={classes.avatar} />
+                );
             }
-        },
-            
+        }
+      },
+      {
+        name: "Make",
+        options: {
+       filter: false
+         
+        }
+      },
+      {
+        name: "Model",
+        filter: false
+      },
+      {
+        name: "Year",
+        options: {         
+         filter: false
+        }
+      },
+     
+      {
+        name: "Hosted By",
+        filter: false
+      },
+      {
+        name: "Status",
+        options: {         
+           filter: true,
+           download:false,
+           customBodyRender: (value, tableMeta, updateValue) => {
+                return (
+                    <VehicleStatus
+                    value={value}
+                    index={tableMeta.columnIndex}
+                    change={event => updateValue(event)}
+                    />
+                );
+            }
+        }
       },
       {
         name: "View",
@@ -302,27 +308,25 @@ __hostdetail__(row) {
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
                 return (
-                   <Button variant="fab" mini color="secondary" aria-label="Edit" className={classes.button} onClick={this.__hostdetail__.bind(this,value)}>
-                    <Icon>pageview_icon</Icon>
-                   </Button>
+                    <ArrowRightAlt className={classes.ArrowRightAlt} onClick={this.__vehicledetail__.bind(this,value)} />
                 );
             }
-        } 
+        }
       }
     ];
-    
-     const options = {
+    const options = {
       filter: true,
       filterData:this.state.filterDataValue,
       filterList:this.state.filterList,
       searchText:this.state.search,
       filterType: "checkbox",
       responsive: "scroll",
-      selectableRows: false,
+      selectableRows: true,
       serverSide: true,
       count:this.state.count,
       page: this.state.page,
       rowsPerPage:this.state.item_per_page,
+      onRowsDelete:this.deleteRowConfirm,
       onTableChange: (action, tableState) => {
         switch (action) {
           case 'changePage':
@@ -350,72 +354,32 @@ __hostdetail__(row) {
     };
 
     return (
-        <div>      
-            <MUIDataTable
-              title={"Hosts list"}
-              data={this.state.table_data}
-              columns={columns}
-              options={options}     
-            />
-            {(this.state.message_to !== undefined && this.state.message_to !== '') ?
-                <ConfirmationDialog
-                  classes={{
-                      paper: classes.paper,
-                  }}
-                  open={this.state.open_message_dialog}
-                  onCancel={this.handleConfirmClose}
-                  onOk={this.handleSendMessage}
-                  value=""
-                  is_ok={true}
-                  is_cancel={true}
-                  ok_label="Send"
-                  cancel_label="Cancel"
-                  message={`Message to ${this.state.message_to}`}
-                  get_value={true}
-                />
-            : ''}
-            {(this.state.message_to !== undefined && this.state.message_to !== '') ?
-                        <ConfirmationDialog
-                          classes={{
-                              paper: classes.paper,
-                          }}
-                          open={this.state.open_message_success_dialog}
-                          onCancel={this.handleConfirmClose}
-                          onOk={this.handleConfirmClose}
-                          value=""
-                          is_ok={true}
-                          is_cancel={false}
-                          ok_label="Ok"
-                          cancel_label="Cancel"
-                          message={`Message sent to ${this.state.message_to}`}
-                          get_value={false}
-                        />
-            : ''}
-        </div>   
+      <Paper className={classes.root}>
+        <MUIDataTable
+          title={"Vehicals list"}
+          data={this.state.table_data}
+          columns={columns}
+          options={options}     
+        />
+        <Dialog
+            disableBackdropClick
+            maxWidth="xs"
+            aria-labelledby="confirmation-dialog-title"
+            open={this.state.confirm}
+            >
+                <DialogContent>Are you sure you want to delete the vehicle?</DialogContent>
+                <DialogActions>
+                      <Button color="primary" onClick={this._handleDeleteRow}>Ok</Button>
+                      <Button color="primary" onClick={this._handleConfirmCancel}>Cancel</Button>
+                </DialogActions>
+        </Dialog>
+       </Paper>
     );
   }
 }
 
-Guests.propTypes = {
+Vehicles.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-
-const mapStateToProps = (state) => {
-  return {
-      SessionReducer: state.SessionReducer
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        RunRedux: (data) => {
-            dispatch(data);
-        },
-    };
-};
-
-export default compose(
-                  withStyles(Nstyles), 
-                  connect(mapStateToProps, mapDispatchToProps)
-                  )(Guests);
+export default withStyles(Nstyles) (Vehicles);

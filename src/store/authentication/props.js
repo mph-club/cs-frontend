@@ -7,6 +7,7 @@ export default {
     if(Credential == null){
       return{
         email: null,
+        id_token: null,
         token: null,
         refresh_token: null,
         auth :true,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import MUIDataTable from "mui-datatables";
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles';
-import VehicleStatus from '../../../../components/vehicle/VehicleStatus';
+//import VehicleStatus from '../../../../components/vehicle/VehicleStatus';
 import { Nstyles }   from './Styles/VehiclesStyle';
 import axios from 'axios';
 import Server from '../../../../config/server.js';
@@ -13,8 +13,21 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
+import {connect} from "react-redux";
+import {compose} from 'redux'
+import RequestHelper from '../../../../account/vehicles/helper/request';
+import Presenter from '../../../../account/vehicles/presenter';
+import Utils from '../../../../helpers/utils'
 
 class Vehicles extends React.Component {
+    
+    constructor(props){
+      super(props)
+      
+      this.getData= this.getData.bind(this)      
+      this.__OnGetVehiclesFailed__= this.__OnGetVehiclesFailed__.bind(this)      
+      this.__OnGetVehiclesSucceed__= this.__OnGetVehiclesSucceed__.bind(this)
+    }    
     
     state = {
         page: 0,
@@ -27,8 +40,8 @@ class Vehicles extends React.Component {
         confirm:false,
         filter:[],
         search:'',
-        filterList:[[],[],[],[],[],[],[]],
-        filterDataValue:[[],[],[],[],[],[],[]],
+        filterList:[[],[],[],[],[],[]],
+        filterDataValue:[[],[],[],[],[],[]],
     };
 
     componentDidMount() {        
@@ -44,50 +57,40 @@ class Vehicles extends React.Component {
     }
 
     getData = (params) => {
-      this.getVehicleDataAPI(params).then(response => {
-              var result = [];
-              for(var i=0;i< response.data.length;i++){
-                  var arr = [];
-                  for (var key in response.data[i]) {
-                    arr.push(response.data[i][key]);
-                  }
-                  result.push(arr);
-              }
-              this.setState({
-                  table_data:result,
-                  count:response.recordsTotal,
-                  page:params.page,
-                  offset:params.offset,
-                  item_per_page:params.item_per_page,
-                  sort_by:params.sort_by,
-                  sort_order:params.sort_order,
-                  filter:params.filter,
-                  search:params.search
-              });
-          });
+        Presenter.getAll(RequestHelper.getAll(this.__OnGetVehiclesSucceed__,this.__OnGetVehiclesFailed__,this.state,this.props,this))
     };
     
-    getVehicleDataAPI = (params) => {
-        var filterData = '';
-        if(params.filter.length > 0){
-            filterData = JSON.stringify(params.filter);
-        }
-        return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/getItems?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
-                setTimeout(() => {
-                    resolve(response.data);
-                }, 250);
-            }).catch((error) => {
-                resolve([{data:[],recordsTotal:0}]);
+    __OnGetVehiclesFailed__(error){
+    }
+    __OnGetVehiclesSucceed__(response){
+        var table_fields = ['photos','make','model','year','status','id'];
+        var result = [];        
+        if(response.data.error === undefined){
+            for(var i=0;i< response.data.Vehicles.length;i++){
+                var arr = [];
+                for(var field in table_fields){
+                    for (var key in response.data.Vehicles[i]) {                        
+                        if(key === table_fields[field]){
+                            arr.push(response.data.Vehicles[i][key]);
+                          }  
+                        }
+                    }                    
+                result.push(arr);
+            }
+            this.setState({
+                table_data:result,
+                count:response.data.Count,
             });
-   
-        });
-        
+        }else{
+            if(Utils.RefreshSession(this.state, this.props, this)){
+                Presenter.getAll(RequestHelper.getAll(this.__OnGetVehiclesSucceed__,this.__OnGetVehiclesFailed__,this.state,this.props,this))
+            }
+        }
     }
     
     deleteVehicleDataAPI = (params) => {
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/vehicles/delete?data='+JSON.stringify(params)).then(function (response) {
+            axios.get(Server.VEHICAL.API + 'deleteVehicle?data='+JSON.stringify(params)).then(function (response) {
                 setTimeout(() => {
                     resolve(response);
                 }, 250);
@@ -111,15 +114,22 @@ class Vehicles extends React.Component {
     };
     
     changePage = (pageState) => {
-          var request = [];
-          request['page'] = pageState.page;
-          request['offset'] = (request.page * pageState.rowsPerPage);
-          request['item_per_page'] = pageState.rowsPerPage;
-          request['sort_by'] = this.state.sort_by;
-          request['sort_order'] = this.state.sort_order;
-          request['filter'] = this.state.filter;
-          request['search'] = this.state.search;
-          this.getData(request);        
+        var request = [];
+        request['page'] = pageState.page;
+        request['offset'] = (request.page * pageState.rowsPerPage);
+        request['item_per_page'] = pageState.rowsPerPage;
+        request['sort_by'] = this.state.sort_by;
+        request['sort_order'] = this.state.sort_order;
+        request['filter'] = this.state.filter;
+        request['search'] = this.state.search;        
+        this.setState({
+            page:pageState.page,
+            offset:(pageState.page * pageState.rowsPerPage),
+            item_per_page:pageState.rowsPerPage,
+            },() => {
+            this.getData(request); 
+        });
+                 
     };
     
     changeRowPage = (pageState) => {
@@ -130,8 +140,14 @@ class Vehicles extends React.Component {
         request['sort_by'] = this.state.sort_by;
         request['sort_order'] = this.state.sort_order;
         request['filter'] = this.state.filter;
-        request['search'] = this.state.search;
-        this.getData(request);
+        request['search'] = this.state.search;        
+        this.setState({
+            page:0,
+            offset:(0 * pageState.rowsPerPage),
+            item_per_page:pageState.rowsPerPage,
+            },() => {
+            this.getData(request); 
+        });
     };
     
     filterData = (tableState) =>{
@@ -241,7 +257,7 @@ class Vehicles extends React.Component {
         });
     }
     
-    __vehicledetail__(row) {
+    __vehicledetail__(row) {     
         this.props.history.push("/admin/vehicledetail/" + row)
     }
     
@@ -256,8 +272,12 @@ class Vehicles extends React.Component {
             sort:false,
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
+                let imageUrl = '../../images/users/No_Image_Available.png';
+                if(value !== null){
+                  imageUrl = value[0];
+                }                
                 return (
-                 <Avatar alt="Remy Sharp" src={`/images/${value}`} className={classes.avatar} />
+                 <Avatar alt="Remy Sharp" src={imageUrl} className={classes.avatar} />
                 );
             }
         }
@@ -265,39 +285,40 @@ class Vehicles extends React.Component {
       {
         name: "Make",
         options: {
-       filter: false
+       filter: false,
+       sort:false
          
         }
       },
       {
         name: "Model",
-        filter: false
+        filter: false,
+       sort:false
       },
       {
         name: "Year",
         options: {         
-         filter: false
+         filter: false,
+       sort:false
         }
       },
-     
-      {
-        name: "Hosted By",
-        filter: false
-      },
+//      {
+//        name: "Hosted By",
+//        options: {
+//            filter: false,
+//            sort:false,
+//            download:false,
+//            customBodyRender: (value, tableMeta, updateValue) => {
+//                return (<b>-</b>);
+//            }
+//        }
+//      },
       {
         name: "Status",
         options: {         
            filter: true,
-           download:false,
-           customBodyRender: (value, tableMeta, updateValue) => {
-                return (
-                    <VehicleStatus
-                    value={value}
-                    index={tableMeta.columnIndex}
-                    change={event => updateValue(event)}
-                    />
-                );
-            }
+       sort:false,
+          
         }
       },
       {
@@ -307,6 +328,7 @@ class Vehicles extends React.Component {
             sort:false,
             download:false,
             customBodyRender: (value, tableMeta, updateValue) => {
+
                 return (
                     <ArrowRightAlt className={classes.ArrowRightAlt} onClick={this.__vehicledetail__.bind(this,value)} />
                 );
@@ -315,13 +337,14 @@ class Vehicles extends React.Component {
       }
     ];
     const options = {
-      filter: true,
+      filter: false,
       filterData:this.state.filterDataValue,
       filterList:this.state.filterList,
       searchText:this.state.search,
       filterType: "checkbox",
+      search:false,
       responsive: "scroll",
-      selectableRows: true,
+      selectableRows: false,
       serverSide: true,
       count:this.state.count,
       page: this.state.page,
@@ -356,7 +379,7 @@ class Vehicles extends React.Component {
     return (
       <Paper className={classes.root}>
         <MUIDataTable
-          title={"Vehicals list"}
+          title={"Vehicles list"}
           data={this.state.table_data}
           columns={columns}
           options={options}     
@@ -382,4 +405,21 @@ Vehicles.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(Nstyles) (Vehicles);
+const mapStateToProps = (state) => {
+  return {
+      SessionReducer: state.SessionReducer
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        RunRedux: (data) => {
+            dispatch(data);
+        },
+    };
+};
+
+export default compose(
+                  withStyles(Nstyles), 
+                  connect(mapStateToProps, mapDispatchToProps)
+                  )(Vehicles);

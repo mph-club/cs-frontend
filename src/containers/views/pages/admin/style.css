@@ -1,0 +1,21 @@
+.carousel .thumb img {
+    width: 100% !important;
+    height: 50px;
+}
+
+.carousel .slide img {
+    max-height: 500px;  /* change this to whatever you want */
+    width: auto;
+}
+
+
+.carousel .slide  {
+    background: white;
+}
+
+.carousel .slide .legend  {
+    background: transparent;
+}
+.carousel .thumbs {
+	text-align: -webkit-center;
+}

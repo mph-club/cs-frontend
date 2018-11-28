@@ -71,7 +71,7 @@ class Guests extends React.Component {
             filterData = JSON.stringify(params.filter);
         }
         return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.APICI + 'api/v1/users/getGuestsList?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
+            axios.get(Server.VEHICAL.API + 'getGuestsList?limit='+params.item_per_page+'&offset='+params.offset+'&sort_by='+params.sort_by+'&sort_order='+params.sort_order+'&filter='+filterData+'&search='+params.search,{}).then(function (response) {
                 setTimeout(() => {
                     resolve(response.data);
                 }, 250);
@@ -224,7 +224,7 @@ class Guests extends React.Component {
           download:false,
           customBodyRender: (value, tableMeta, updateValue) => {
             return (
-             <Avatar alt="Remy Sharp" src={`/images/users/${value}`} className={classes.avatar} />
+             <Avatar alt="Remy Sharp" src={`../images/users/${value}`} className={classes.avatar} />
             );
           }
         }

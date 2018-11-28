@@ -14,7 +14,7 @@ class VehicleStatus extends React.Component {
   render() {
     const { value, index, change } = this.props;
     
-    const statusList = ["Pending", "Approve", "Deny", "Block"];
+    const statusList = ["PENDING", "APPROVE", "DENY", "BLOCK"];
     
     return (
       <FormControl>

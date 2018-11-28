@@ -74,6 +74,7 @@ const styles = theme => ({
     display: 'block',
     overflow: 'hidden',
     width: '100%',
+    height: '500px',
   },
   featurelist: {
     paddingLeft: 0,

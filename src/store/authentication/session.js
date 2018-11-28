@@ -5,8 +5,9 @@ const SessionReducer = (state = UserAuthenticationModel.GetCredential(),action) 
             state = {
                 ...state,
                 email: action.payload.getIdToken().payload.email,
-                token: action.payload.getAccessToken().getJwtToken(),
-                refresh_token:action.payload.getRefreshToken().getToken(),
+                id_token:action.payload.idToken,
+                token: action.payload.accessToken,
+                refresh_token:action.payload.refreshToken,
                 auth :true,
                 name: action.payload.getIdToken().payload.email,
                 alias:null,
@@ -19,6 +20,7 @@ const SessionReducer = (state = UserAuthenticationModel.GetCredential(),action) 
             state = {
                 ...state,
                 email: null,
+                id_token: null,
                 token: null,
                 refresh_token: null,
                 auth :false,

@@ -21,7 +21,6 @@ import { LoginStyle,NLabel as Label } from './Styles/LoginStyle';
 class Login extends Component {
 
   constructor(props){
-
       super(props)
       
       // Check user authentication initally.

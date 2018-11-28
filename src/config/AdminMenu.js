@@ -36,5 +36,13 @@ menu[8]= {
   label : 'Create User',  
   url : 'createuser'
 }
+menu[9]= {
+  label : 'List Users',  
+  url : 'users'
+}
+menu[10]= {
+  label : 'User Detail',  
+  url : 'userdetail'
+}
 
 export default menu;

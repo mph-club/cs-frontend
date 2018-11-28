@@ -5,6 +5,8 @@ export default{
   __BROWSER_UID__ : new fingerprint().get() ,
   CreateBrowserSession: function(cridential){
     return (jwt.sign({
+        "id_token": cridential.id_token,
+        "refresh_token": cridential.refresh_token,
         "token": cridential.token,
         "name": cridential.name,
         "auth": cridential.auth, // to check user is logged in or not

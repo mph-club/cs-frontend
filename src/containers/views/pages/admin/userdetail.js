@@ -8,12 +8,13 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import {connect} from "react-redux";
 import {compose} from 'redux'
-import {NTitle,NTitle1,Nstyles} from './Styles/HostDetailStyle';
-import axios from 'axios';
-import Server from '../../../../config/server.js';
+import {NTitle,NTitle1,Nstyles} from './Styles/GuestDetailStyle';
 import ConfirmationDialog from '../../dialogs/confirmation';
+import RequestHelper from '../../../../account/users/helper/request';
+import Presenter from '../../../../account/users/presenter';
+import Utils from '../../../../helpers/utils'
 
-class HostDetail extends Component {
+class GuestDetail extends Component {
 
     constructor(props){
         super(props)
@@ -22,36 +23,39 @@ class HostDetail extends Component {
           direction: 'row',
           justify: 'center',
           activeStep: 0,
-          host_detail:{}
+          user_detail:{}
         };
+        
+    this.getData= this.getData.bind(this)      
+    this.__OnGetUserFailed__= this.__OnGetUserFailed__.bind(this)      
+    this.__OnGetUserSucceed__= this.__OnGetUserSucceed__.bind(this)
 
     }
     
-    componentDidMount() {
-        let host_id = this.props.match.params.hostId;
-        this.getData(host_id);
-    }
-
-    getData = (host_id) => {
-      this.getHostDetailAPI(host_id).then(response => {
-              this.setState({
-                  host_detail:response.data
-              });
-          });
+    
+    getData = () => {
+        Presenter.getUserDetail(RequestHelper.getUserDetail(this.__OnGetUserSucceed__,this.__OnGetUserFailed__,this.state,this.props,this))
     };
     
-    getHostDetailAPI = (host_id) => {
-        return new Promise((resolve, reject) => {
-            axios.get(Server.VEHICAL.API + 'getUserById?user_id='+host_id,{}).then(function (response) {
-                setTimeout(() => {
-                    resolve(response.data);
-                }, 250);
-            }).catch((error) => {
-                resolve([{data:[],recordsTotal:0}]);
+    __OnGetUserFailed__(error){
+    }
+    
+    __OnGetUserSucceed__(response){
+        if(response.data.error === undefined){
+            this.setState({
+                user_detail:response.data.User
+                },() => {
             });
-   
-        });
-        
+        }else{
+            if(Utils.RefreshSession(this.state, this.props, this)){
+                Presenter.getUserDetail(RequestHelper.getUserDetail(this.__OnGetUserSucceed__,this.__OnGetUserFailed__,this.state,this.props,this))
+            }
+        }
+    }
+    
+  
+    componentDidMount() {
+        this.getData();
     }
     
     handleOpenMessageDialog = () => {
@@ -135,9 +139,10 @@ class HostDetail extends Component {
 
   render() {
     const { classes } = this.props;
+    
     return (
       <div>
-        <NTitle> Detail of Host</NTitle>
+        <NTitle> Detail of User</NTitle>
         <Paper className={classes.root}>
           <Grid container justify="center">
             <Grid item lg={10}>
@@ -146,20 +151,18 @@ class HostDetail extends Component {
                   <Typography variant="subheading" className={classes.subheading} gutterBottom>&nbsp;</Typography>
                   <Grid container >                  
                     <Grid item xs={5}>
-                      <Avatar alt={this.state.host_detail.user_name} src={`../../../../images/users/${this.state.host_detail.picture}`} className={classes.ownedavatar} />
+                      <Avatar alt='profile_pic' src={(this.state.user_detail.profile_photo !== '' ? this.state.user_detail.profile_photo : '../../images/users/No_Image_Available.png')} className={classes.ownedavatar} />
                       <Grid item xs={12}>
-                      <NTitle1> {this.state.host_detail.user_name} </NTitle1>
-                    </Grid>
+                      </Grid>
                     </Grid>
                     <Grid item xs={7}>
                     <Grid container >
                         <Grid item xs={12}>
                           <NTitle1> Phone Number </NTitle1>
-                          <Typography variant="body1">{this.state.host_detail.phone_number}</Typography>
+                          <Typography variant="body1">{(this.state.user_detail.phone!== '' ? this.state.user_detail.phone : ' - ' )}</Typography>
                           <NTitle1> Email </NTitle1>
-                          <Typography variant="body1">{this.state.host_detail.email}</Typography>
-                          <NTitle1> Status </NTitle1>
-                          <Typography variant="body1">{this.state.host_detail.status}</Typography>
+                          <Typography variant="body1">{(this.state.user_detail.email !== '' ? this.state.user_detail.email : ' - ')}</Typography>
+
                         </Grid>
                     </Grid>
                         <Grid container spacing={24}>
@@ -169,12 +172,12 @@ class HostDetail extends Component {
                                 </Button>
                             </Grid>
                             <Grid item xs={5}>
-                                {this.state.host_detail.status === 'Block' ?
+                                {this.state.user_detail.status === 'Block' ?
                                 <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenUnblockDialog}>
                                       Unblock
                                   </Button>
                                 : ''} 
-                                {this.state.host_detail.status !== 'Block' ?
+                                {this.state.user_detail.status !== 'Block' ?
                                 <Button variant="contained" size="large" color="secondary" className={classes.button} onClick={this.handleClickOpenBlockDialog}>
                                       Block
                                   </Button>
@@ -188,7 +191,7 @@ class HostDetail extends Component {
               </Grid>
             </Grid>
           </Grid>
-                {(this.state.host_detail.user_name !== undefined && this.state.host_detail.user_name !== '') ?
+                {(this.state.user_detail.user_name !== undefined && this.state.user_detail.user_name !== '') ?
                       <ConfirmationDialog
                         classes={{
                             paper: classes.paper,
@@ -201,12 +204,12 @@ class HostDetail extends Component {
                         is_cancel={true}
                         ok_label="Send"
                         cancel_label="Cancel"
-                        message={`Message to ${this.state.host_detail.user_name}`}
+                        message={`Message to ${this.state.user_detail.user_name}`}
                         get_value={true}
                         value_field_name='Message'
                       />
                 : ''}
-                {(this.state.host_detail.user_name !== undefined && this.state.host_detail.user_name !== '') ?
+                {(this.state.user_detail.user_name !== undefined && this.state.user_detail.user_name !== '') ?
                             <ConfirmationDialog
                               classes={{
                                   paper: classes.paper,
@@ -219,11 +222,11 @@ class HostDetail extends Component {
                               is_cancel={false}
                               ok_label="Ok"
                               cancel_label="Cancel"
-                              message={`Message sent to ${this.state.host_detail.user_name}`}
+                              message={`Message sent to ${this.state.user_detail.user_name}`}
                               get_value={false}
                             />
                 : ''}
-                {this.state.host_detail.user_name !== undefined ?
+                {this.state.user_detail.user_name !== undefined ?
                 <ConfirmationDialog
                   classes={{
                       paper: classes.paper,
@@ -236,11 +239,11 @@ class HostDetail extends Component {
                   is_cancel={true}
                   ok_label="Block"
                   cancel_label="Cancel"
-                  message={`Why are you blocking ${this.state.host_detail.user_name}?`}
+                  message={`Why are you blocking ${this.state.user_detail.user_name}?`}
                   get_value={true}
                 />
             : ''}
-            {this.state.host_detail.user_name !== undefined ?
+            {this.state.user_detail.user_name !== undefined ?
                 <ConfirmationDialog
                   classes={{
                       paper: classes.paper,
@@ -253,11 +256,11 @@ class HostDetail extends Component {
                   ok_label="Ok"
                   is_cancel={false}                  
                   cancel_label="Cancel"
-                  message={`${this.state.host_detail.user_name} has been blocked.`}
+                  message={`${this.state.user_detail.user_name} has been blocked.`}
                   get_value={false}
                 />
             : ''}
-            {this.state.host_detail.user_name !== undefined ?
+            {this.state.user_detail.user_name !== undefined ?
                 <ConfirmationDialog
                   classes={{
                       paper: classes.paper,
@@ -270,11 +273,11 @@ class HostDetail extends Component {
                   is_cancel={true}
                   ok_label="Unblock"
                   cancel_label="Cancel"
-                  message={`Why are you unblocking ${this.state.host_detail.user_name}?`}
+                  message={`Why are you unblocking ${this.state.user_detail.user_name}?`}
                   get_value={true}
                 />
             : ''}            
-            {this.state.host_detail.user_name !== undefined ?
+            {this.state.user_detail.user_name !== undefined ?
                 <ConfirmationDialog
                   classes={{
                       paper: classes.paper,
@@ -287,7 +290,7 @@ class HostDetail extends Component {
                   ok_label="Ok"
                   is_cancel={false}                  
                   cancel_label="Cancel"
-                  message={`${this.state.host_detail.user_name} has been unblocked.`}
+                  message={`${this.state.user_detail.user_name} has been unblocked.`}
                   get_value={false}
                 />
             : ''}       
@@ -297,7 +300,7 @@ class HostDetail extends Component {
   }
 }
 
-HostDetail.propTypes = {
+GuestDetail.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
@@ -319,4 +322,4 @@ const mapDispatchToProps = (dispatch) => {
 export default compose(
                   withStyles(Nstyles,{withTheme: true}), 
                   connect(mapStateToProps, mapDispatchToProps)
-                )(HostDetail);
+                )(GuestDetail);

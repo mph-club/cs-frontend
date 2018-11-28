@@ -7,11 +7,11 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 class App extends Component {
   render() {
     return (
-        <Router basename={'/cs-dashboard'}>
+        <Router>
           <div>
-            <Route exact path={`${process.env.PUBLIC_URL}`} component={Login}/>      
-            <Route  path={`${process.env.PUBLIC_URL}/login`} component={Login} /> 
-            <Route  path={`${process.env.PUBLIC_URL}/admin`} component={AdminDashboard} />      
+            <Route exact path="/" component={Login}/>      
+            <Route  path="/login" component={Login} />
+            <Route  path="/admin" component={AdminDashboard} />      
           </div>
        </Router>
     );
