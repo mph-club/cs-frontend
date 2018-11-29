@@ -372,35 +372,8 @@ class VehicleDetail extends Component {
                   
                     <Divider className={classes.divider} />
                  <Typography variant="subheading" className={classes.subheading} gutterBottom>Address</Typography>
-                  <Grid container >
-                    <Grid item xs={6}>
-                      <List>
-                        <ListItem className={classes.featurelist}>
-                        
-                          <ListItemText primary={this.state.vehicle_detail.address} />
-
-                        </ListItem>
-                       <ListItem className={classes.featurelist}>
-                         
-                          <ListItemText primary={this.state.vehicle_detail.city} />
-                          <ListItemText primary={this.state.vehicle_detail.state} />
-
-                        </ListItem>
-                        
-                      </List>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <List>
-                        <ListItem className={classes.featurelist}>
-                        
-                          <ListItemText primary={this.state.vehicle_detail.place} />
-       
-                        </ListItem>
-                     
-                        
-                      </List>
-                    </Grid>
-                  </Grid>
+                   <Typography variant="body1">{this.state.vehicle_detail.address} - {this.state.vehicle_detail.place} - {this.state.vehicle_detail.city} - {this.state.vehicle_detail.state} </Typography>
+                 
                 </Grid>
                
               </Grid>

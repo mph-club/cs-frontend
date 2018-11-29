@@ -33,8 +33,8 @@ menu[7]= {
   url : 'hostdetail'
 }
 menu[8]= {
-  label : 'Create User',  
-  url : 'createuser'
+  label : 'Create Staff',  
+  url : 'createstaff'
 }
 menu[9]= {
   label : 'List Users',  

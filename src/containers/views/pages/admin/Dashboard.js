@@ -79,6 +79,11 @@ class Dashboard extends React.Component {
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
+  handleOpenPage = () => {
+       this.props.history.push("/admin/createstaff")
+
+    this.setState({ anchorEl: null });
+  };
 
   render() {
     const { anchorEl } = this.state;
@@ -141,7 +146,7 @@ class Dashboard extends React.Component {
                       open={open}
                       onClose={this.handleClose}
                       >
-                
+                 <MenuItem onClick={this.handleOpenPage}>Create Staff</MenuItem>
                       <MenuItem onClick={()=>AuthenticationPresenter.Logout(this)}>Logout</MenuItem>
                     </Menu>
                   </div>
@@ -174,7 +179,7 @@ class Dashboard extends React.Component {
                <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
                <Route path="/admin/users/" name="users" component={Users}/>
                <Route path="/admin/userdetail/:User" name="userdetail" component={UserDetail}/>
-               <Route path="/admin/createuser" name="createuser" component={createUser}/>
+               <Route path="/admin/createstaff" name="createstaff" component={createUser}/>
                </Switch>
             </div>
           </main>

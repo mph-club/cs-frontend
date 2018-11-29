@@ -143,7 +143,7 @@ class CreateUser extends Component {
   const { loading } = this.state;
   return (
         <div>
-        <NTitle> Create User</NTitle>
+        <NTitle> Create Staff</NTitle>
         <Paper className={classes.root}>
           <Grid container justify="center">
             <Grid item lg={10}>

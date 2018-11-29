@@ -61,14 +61,9 @@ class NestedList extends React.Component {
               <ListItemIcon>
                 <AccountIcon />
               </ListItemIcon>
-              <ListItemText inset primary="List User" />
+              <ListItemText inset primary="Users" />
             </ListItem>
-            <ListItem button className={classes.nested} component={Link} to="/admin/createuser">
-              <ListItemIcon>
-                <AccountIcon />
-              </ListItemIcon>
-              <ListItemText inset primary="Create User" />
-            </ListItem>
+           
             
           </List>
         </Collapse>
