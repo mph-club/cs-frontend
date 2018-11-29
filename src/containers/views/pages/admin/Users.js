@@ -16,7 +16,7 @@ import RequestHelper from '../../../../account/users/helper/request';
 import Presenter from '../../../../account/users/presenter';
 import Utils from '../../../../helpers/utils'
 
-class Users extends React.Component {
+        class Users extends React.Component {
 
     constructor(props) {
         super(props)
@@ -54,9 +54,11 @@ class Users extends React.Component {
     getData = (params) => {
         Presenter.getUsers(RequestHelper.getUsers(this.__OnGetUserSucceed__, this.__OnGetUserFailed__, this.state, this.props, this))
     }
-    ;
-            __OnGetUserFailed__(error) {
+
+    __OnGetUserFailed__(error) {
+
     }
+
     __OnGetUserSucceed__(response) {
 
         var table_fields = ['profile_photo', 'email', 'phone', 'id'];
@@ -78,8 +80,7 @@ class Users extends React.Component {
                 count: response.data.Count,
             });
         } else {
-debugger;
-            if(Utils.RefreshSession(this.state, this.props, this)){
+            if (Utils.RefreshSession(this.state, this.props, this)) {
                 Presenter.getUsers(RequestHelper.getUsers(this.__OnGetUserSucceed__, this.__OnGetUserFailed__, this.state, this.props, this))
             }
         }
@@ -97,8 +98,8 @@ debugger;
         request['search'] = this.state.search;
         this.getData(request);
     }
-    ;
-            changePage = (pageState) => {
+
+    changePage = (pageState) => {
         var request = [];
         request['page'] = pageState.page;
         request['offset'] = (request.page * pageState.rowsPerPage);
@@ -116,8 +117,8 @@ debugger;
         });
 
     }
-    ;
-            changeRowPage = (pageState) => {
+
+    changeRowPage = (pageState) => {
         var request = [];
         request['page'] = 0;
         request['offset'] = (0 * pageState.rowsPerPage);
@@ -134,8 +135,8 @@ debugger;
             this.getData(request);
         });
     }
-    ;
-            filterData = (tableState) => {
+
+    filterData = (tableState) => {
         this.setState({
             filterList: tableState.filterList,
             filterDataValue: tableState.filterData,
@@ -207,23 +208,23 @@ debugger;
             open_message_success_dialog: false
         });
     }
-    ;
-            handleSendMessage = () => {
+
+    handleSendMessage = () => {
         this.setState({
             open_message_dialog: false,
             open_message_success_dialog: true
         });
     }
-    ;
-            handleConfirmClose = value => {
-                this.setState({
-                    message_to: '',
-                    open_message_dialog: false,
-                    open_message_success_dialog: false
-                });
-            }
-    ;
-            __userdetail__(user_id) {
+
+    handleConfirmClose = value => {
+        this.setState({
+            message_to: '',
+            open_message_dialog: false,
+            open_message_success_dialog: false
+        });
+    }
+
+    __userdetail__(user_id) {
         this.props.history.push("/admin/userdetail/" + user_id)
     }
 

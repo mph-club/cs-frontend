@@ -3,18 +3,21 @@
  */
 
 export default{
-    AUTHENTICATION:{
-      ERROR:{
-        PHONE:{
-          EMPTY:'Please enter Phone number',
+    AUTHENTICATION: {
+        ERROR: {
+            USER_ROLE: {
+                EMPTY: 'Please select role',
+            },
+            PHONE: {
+                EMPTY: 'Please enter Phone number',
+            },
+            PASSWORD: {
+                EMPTY: 'Please enter Password',
+            },
+            EMAIL: {
+                EMPTY: 'Please enter Email address',
+                INVALID: 'Please enter valid Email address'
+            },
         },
-        PASSWORD:{
-          EMPTY:'Please enter Password',
-        },
-        EMAIL:{
-          EMPTY:'Please enter Email address',
-          INVALID: 'Please enter valid Email address'
-        },        
-      },
     },
 }

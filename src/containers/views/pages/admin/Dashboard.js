@@ -33,6 +33,8 @@ import Users from './Users';
 //import Hosts from './Hosts';
 //import createUser from './createUser';
 import Utils from '../../../../helpers/utils'
+import createUser from './createUser';
+
 class Dashboard extends React.Component {
 
   constructor(props){
@@ -172,7 +174,7 @@ class Dashboard extends React.Component {
                <Route path="/admin/vehicledetail/:Vehicle" name="vehicledetail" component={VehicleDetail}/>
                <Route path="/admin/users/" name="users" component={Users}/>
                <Route path="/admin/userdetail/:User" name="userdetail" component={UserDetail}/>
-              
+               <Route path="/admin/createuser" name="createuser" component={createUser}/>
                </Switch>
             </div>
           </main>

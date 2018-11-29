@@ -30,14 +30,21 @@ export default {
             Name : 'phone_number',
             Value : params.data.phone
         };
-
+        
+        var dataRole = {
+            Name : 'custom:role',
+            Value : params.data.user_role,
+        };
+        
         var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
         var attributeName = new AmazonCognitoIdentity.CognitoUserAttribute(dataName);
         var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+        var attributeRole = new AmazonCognitoIdentity.CognitoUserAttribute(dataRole);
 
         attributeList.push(attributeEmail);
         attributeList.push(attributeName);
         attributeList.push(attributePhoneNumber);
+        attributeList.push(attributeRole);
 
         userPool.signUp(params.data.email, params.data.password, attributeList, null, function(err, result){
             if (err) {

@@ -15,7 +15,16 @@
 
 .carousel .slide .legend  {
     background: transparent;
+    font-size: 30px;
+opacity: 1;
+text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.8);
+font-weight: 700;
 }
 .carousel .thumbs {
 	text-align: -webkit-center;
 }
+.carousel{margin:-33px 20px 0;text-align: center;}
+.carousel .thumbs-wrapper{width: auto;display: inline-block;box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 3px 1px -2px rgba(0, 0, 0, 0.12);background-color: #fff;border-radius: 6px;margin: 0;}
+.carousel .thumbs{width: auto;display: inline-block;margin: 0;padding: 10px;}
+.carousel .thumb.selected, .carousel .thumb:hover{border-color: #3f51b5;}
+.carousel .thumb{margin-right: 0;}

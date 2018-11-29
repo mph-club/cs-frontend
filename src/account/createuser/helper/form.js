@@ -14,6 +14,24 @@ export default{
      */
     
     var valid = true
+    
+    /*
+     * Role Validation
+     * Checks for empty input only!
+    */    
+    
+    if(self.state.user_role.value.trim() === ""){
+      self.setState({
+        user_role:{
+          ...self.state.user_role,
+          error : true,
+          message : FormMessage.AUTHENTICATION.ERROR.USER_ROLE.EMPTY,
+        }
+      })
+      valid = false
+    }
+    
+    
     // eslint-disable-next-line
     if(self.state.email.value.trim() === ""){
       self.setState({

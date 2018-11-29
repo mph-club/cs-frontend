@@ -16,7 +16,8 @@ import { compose } from 'redux'
 import {NTitle, Nstyles,NLabel as Label } from './Styles/CreateUserStyle';
 import Grid from '@material-ui/core/Grid';
 import ConfirmationDialog from '../../dialogs/confirmation';
-
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 class CreateUser extends Component {
 
@@ -24,6 +25,11 @@ class CreateUser extends Component {
       super(props)
       
       this.state = {
+        user_role:{
+            value:"",
+            error:false,
+            message:"",
+        },  
         email:{
           value:"",
           error:false,
@@ -98,6 +104,11 @@ class CreateUser extends Component {
         document.getElementsByName('create_user')[0].password.value = '';
         
         this.setState({ 
+          user_role:{
+            value:"",
+            error:false,
+            message:"",
+          },
           email:{
             value:"",
             error:false,
@@ -143,6 +154,26 @@ class CreateUser extends Component {
                     <Grid item xs={12}>
                         {this.state.error?<Label >{this.state.error}</Label>:''}
                         <form className={classes.form} name="create_user">
+                            <FormControl className={classes.formControl} fullWidth>
+                            <InputLabel htmlFor="age-simple">Role</InputLabel>
+                            <Select
+                              value={this.state.user_role.value}
+                              id="role" 
+                              name="role"                           
+                              onChange={(event)=> this.setState({
+                                    user_role:{
+                                      ...this.state.user_role,
+                                      value : event.target.value,
+                                    }
+                                  }
+                              )}
+                            >
+                              <MenuItem value='super_admin'>Super Admin</MenuItem>
+                              <MenuItem value='admin'>Admin</MenuItem>
+                              <MenuItem value='customer_service'>Customer Service</MenuItem>
+                            </Select>
+                            {this.state.user_role.error?<Label >{'*'+this.state.user_role.message}</Label>:''} 
+                          </FormControl>  
                           <FormControl margin="normal" required fullWidth>
                             <InputLabel htmlFor="email">Email Address</InputLabel>
                             <Input 
